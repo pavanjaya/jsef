@@ -325,7 +325,7 @@ p,blockquote,
 .evp-past{background:#F0F0F0;color:#666}
 
 /* ─── MEMBERSHIP ─── */
-.mem-plans{display:flex;justify-content:center;margin-top:3rem}
+.mem-plans{display:flex;justify-content:center}
 .mem-plan{
   width:100%;max-width:460px;
   border:1.5px solid var(--rule);border-radius:0;padding:3rem;text-align:center;
@@ -341,7 +341,7 @@ p,blockquote,
 
 /* ─── MEMBERSHIP: BENEFITS + STEPS ─── */
 .mem-benefits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);margin-top:3rem}
-.mem-steps{margin-top:3rem}
+.mem-cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:3rem}
 .mem-form{background:var(--surface);border:1px solid var(--rule);border-radius:0;padding:2.5rem;max-width:640px;margin:4rem auto 0}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .fg{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
@@ -571,7 +571,7 @@ footer{background:var(--deep);padding:5.5rem 0 2.5rem}
   .slide-content{padding:0 1.5rem}
   .stats-row{grid-template-columns:1fr 1fr}
   .stat-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}
-  .mis-wrap,.about-grid,.cnt-layout,.eligibility-grid{grid-template-columns:1fr;gap:3rem}
+  .mis-wrap,.about-grid,.cnt-layout,.eligibility-grid,.mem-cta-grid{grid-template-columns:1fr;gap:3rem}
   .pillars-grid{grid-template-columns:1fr}
   .pillars-head,.events-head{flex-direction:column;align-items:flex-start;gap:1rem}
   .join-grid{grid-template-columns:1fr}

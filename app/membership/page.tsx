@@ -157,26 +157,28 @@ export default function MembershipPage() {
             <em>you are.</em>
           </Reveal>
 
-          <MembershipApplication />
-
-          <div className="mem-steps">
-            <Reveal as="span" className="eyebrow" style={{ textAlign: "center", display: "block" }}>
-              How It Works
-            </Reveal>
-            <Reveal as="h3" className="h3" style={{ textAlign: "center", marginBottom: "1rem" }}>
-              Three steps to membership.
-            </Reveal>
-            <div className="val-list">
-              {STEPS.map((s, i) => (
-                <Reveal as="div" className="val-row" delay={STEP_DELAYS[i]} key={s.n}>
-                  <span className="val-n">{s.n}</span>
-                  <div>
-                    <div className="val-title">{s.title}</div>
-                    <div className="val-desc">{s.desc}</div>
-                  </div>
-                </Reveal>
-              ))}
+          <div className="mem-cta-grid">
+            <div className="mem-steps">
+              <Reveal as="span" className="eyebrow">
+                How It Works
+              </Reveal>
+              <Reveal as="h3" className="h3" style={{ marginBottom: "1rem" }}>
+                Three steps to membership.
+              </Reveal>
+              <div className="val-list">
+                {STEPS.map((s, i) => (
+                  <Reveal as="div" className="val-row" delay={STEP_DELAYS[i]} key={s.n}>
+                    <span className="val-n">{s.n}</span>
+                    <div>
+                      <div className="val-title">{s.title}</div>
+                      <div className="val-desc">{s.desc}</div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
+
+            <MembershipApplication />
           </div>
         </div>
       </section>
