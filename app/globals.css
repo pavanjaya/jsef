@@ -82,7 +82,7 @@ nav.scrolled{background:#fff;backdrop-filter:none;border-color:var(--rule)}
 
 /* ─── PAGES ─── */
 .page{padding-top:80px;min-height:100vh}
-.wrap{max-width:1160px;margin:0 auto;padding:0 2.5rem}
+.wrap{padding:0 3rem}
 .sec{padding:7rem 0}
 
 /* ─── REVEAL ─── */
