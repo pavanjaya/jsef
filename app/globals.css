@@ -10,8 +10,8 @@
   --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
   --ease-in-out:cubic-bezier(0.76,0,0.24,1);
 }
-html{scroll-behavior:smooth}
-body{font-family:var(--f);background:var(--bg);color:var(--ink);overflow-x:hidden;line-height:1.65;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth;background:var(--bg);overscroll-behavior-y:none}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);overflow-x:hidden;line-height:1.65;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
 
 
 /* ─── LOADER ─── */
