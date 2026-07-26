@@ -609,18 +609,6 @@ footer{background:var(--footer-bg);padding:5.5rem 0 2.5rem;border-top:1px solid 
 .foot-legal a{font-size:12px;color:rgba(61,11,61,.4);text-decoration:none;transition:color .2s}
 .foot-legal a:hover{color:rgba(61,11,61,.7)}
 
-/* ─── HORIZONTAL MARQUEE ─── */
-.marquee-wrap{overflow:hidden;background:var(--brand);padding:1rem 0}
-.marquee-track{
-  display:flex;gap:3rem;white-space:nowrap;
-  animation:marquee 20s linear infinite;
-  width:max-content;
-}
-.marquee-track:hover{animation-play-state:paused}
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.marquee-item{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;opacity:.85;display:flex;align-items:center;gap:.8rem}
-.marquee-item::after{content:'·';opacity:.5}
-
 /* ─── RESPONSIVE ─── */
 @media(max-width:960px){
   nav{padding:0 1.5rem}

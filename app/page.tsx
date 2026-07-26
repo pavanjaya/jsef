@@ -1,6 +1,5 @@
 import Link from "next/link";
 import HeroCarousel from "./components/HeroCarousel";
-import Marquee from "./components/Marquee";
 import Reveal from "./components/Reveal";
 import Counter from "./components/Counter";
 
@@ -49,7 +48,6 @@ export default function HomePage() {
   return (
     <div className="page page-fade">
       <HeroCarousel />
-      <Marquee />
 
       <div id="h-stats">
         <div className="stats-row">
