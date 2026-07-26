@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Reveal from "../components/Reveal";
+import { createClient } from "../../lib/supabase/client";
 
 const PLAN_FEATS = [
   "Full Event Access",
@@ -61,17 +62,24 @@ const COUNTRIES = ["India", "United States", "United Kingdom", "United Arab Emir
 
 export default function MembershipApplication() {
   const [open, setOpen] = useState(false);
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [country, setCountry] = useState("India");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const closeModal = () => {
     setOpen(false);
-    setPhoto(null);
+    setPhotoPreview(null);
+    setPhotoFile(null);
     setCity("");
     setState("");
     setCountry("India");
+    setError(null);
+    setSubmitted(false);
   };
 
   useEffect(() => {
@@ -93,15 +101,10 @@ export default function MembershipApplication() {
   const onPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setPhotoFile(file);
     const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result as string);
+    reader.onload = () => setPhotoPreview(reader.result as string);
     reader.readAsDataURL(file);
-  };
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Thank you! Application submitted. We will contact you within 5–7 business days.");
-    closeModal();
   };
 
   const onCountryChange = (value: string) => {
@@ -117,6 +120,77 @@ export default function MembershipApplication() {
 
   const isIndia = country === "India";
   const cityOptions = isIndia && state && state !== "Other" ? [...(CITIES_BY_STATE[state] ?? []), "Other"] : [];
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+
+    const form = new FormData(e.currentTarget);
+    const email = String(form.get("email") || "").trim();
+    const password = String(form.get("password") || "");
+    const confirmPassword = String(form.get("confirmPassword") || "");
+
+    if (password !== confirmPassword) {
+      setError("Passwords don't match.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    if (!state || !city) {
+      setError("Please select your state and city.");
+      return;
+    }
+
+    setSubmitting(true);
+    const supabase = createClient();
+
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+    if (signUpError || !signUpData.user) {
+      setError(signUpError?.message || "Could not create your account. Please try again.");
+      setSubmitting(false);
+      return;
+    }
+
+    const userId = signUpData.user.id;
+    let photoPath: string | null = null;
+
+    if (photoFile) {
+      const ext = photoFile.name.split(".").pop() || "jpg";
+      const path = `${userId}/photo.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("member-photos").upload(path, photoFile, { upsert: true });
+      if (!uploadError) photoPath = path;
+    }
+
+    const { error: insertError } = await supabase.from("members").insert({
+      id: userId,
+      full_name: form.get("full_name"),
+      fathers_or_husbands_name: form.get("fathers_or_husbands_name"),
+      dob: form.get("dob") || null,
+      gotra: form.get("gotra") || null,
+      phone: form.get("phone"),
+      email,
+      occupation: form.get("occupation") || null,
+      native_village: form.get("native_village") || null,
+      aadhaar_number: form.get("aadhaar_number"),
+      address_line: form.get("address_line"),
+      city,
+      state,
+      country,
+      pin_code: form.get("pin_code") || null,
+      photo_path: photoPath,
+    });
+
+    setSubmitting(false);
+
+    if (insertError) {
+      setError("Your account was created, but we couldn't save your application details. Please contact us at hello@jsec.org.");
+      return;
+    }
+
+    setSubmitted(true);
+  };
 
   return (
     <>
@@ -147,176 +221,201 @@ export default function MembershipApplication() {
             &#x2715;
           </button>
 
-          <h3 style={{ marginBottom: ".5rem", fontSize: 22 }}>Membership Application</h3>
-          <p style={{ fontSize: 14, color: "var(--ink-3)", marginBottom: "2rem" }}>
-            We&apos;ll review your application and get in touch within 5–7 business days.
-          </p>
+          {submitted ? (
+            <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
+              <div style={{ fontSize: 40, marginBottom: "1rem" }}>✅</div>
+              <h3 style={{ marginBottom: ".8rem", fontSize: 22 }}>Application submitted</h3>
+              <p style={{ fontSize: 14, color: "var(--ink-3)", lineHeight: 1.7, marginBottom: "2rem" }}>
+                Check your email to confirm your account, then log in to track your application. We&apos;ll review it
+                within 5–7 business days.
+              </p>
+              <a href="/login" className="btn btn-ink" style={{ justifyContent: "center" }}>
+                Go to Login →
+              </a>
+            </div>
+          ) : (
+            <>
+              <h3 style={{ marginBottom: ".5rem", fontSize: 22 }}>Membership Application</h3>
+              <p style={{ fontSize: 14, color: "var(--ink-3)", marginBottom: "2rem" }}>
+                We&apos;ll review your application and get in touch within 5–7 business days.
+              </p>
 
-          <form onSubmit={onSubmit}>
-            <label className="photo-upload">
-              <span className="photo-upload-preview">
-                {photo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={photo} alt="" />
-                ) : (
-                  "PHOTO"
-                )}
-              </span>
-              <span>
-                <span style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--ink)" }}>Passport-size photo</span>
-                <span style={{ display: "block", fontSize: 12, color: "var(--ink-3)" }}>Used for your member ID card. Optional.</span>
-              </span>
-              <input type="file" accept="image/*" onChange={onPhotoChange} style={{ display: "none" }} />
-            </label>
+              <form onSubmit={onSubmit}>
+                <label className="photo-upload">
+                  <span className="photo-upload-preview">
+                    {photoPreview ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={photoPreview} alt="" />
+                    ) : (
+                      "PHOTO"
+                    )}
+                  </span>
+                  <span>
+                    <span style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--ink)" }}>Passport-size photo</span>
+                    <span style={{ display: "block", fontSize: 12, color: "var(--ink-3)" }}>Used for your member ID card. Optional.</span>
+                  </span>
+                  <input type="file" accept="image/*" onChange={onPhotoChange} style={{ display: "none" }} />
+                </label>
 
-            <div className="fg-section-title">Personal Details</div>
-            <div className="form-row">
-              <div className="fg">
-                <label>Full Name *</label>
-                <input type="text" placeholder="Your full name" required />
-              </div>
-              <div className="fg">
-                <label>Father&apos;s / Husband&apos;s Name *</label>
-                <input type="text" placeholder="As per Aadhaar" required />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="fg">
-                <label>Date of Birth</label>
-                <input type="date" />
-              </div>
-              <div className="fg">
-                <label>Gotra</label>
-                <input type="text" placeholder="e.g. Kashyap" />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="fg">
-                <label>Phone *</label>
-                <input type="tel" placeholder="+91 XXXXX XXXXX" required />
-              </div>
-              <div className="fg">
-                <label>Email</label>
-                <input type="email" placeholder="you@example.com" />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="fg">
-                <label>Occupation</label>
-                <input type="text" placeholder="e.g. Student, Business" />
-              </div>
-              <div className="fg">
-                <label>Native Village / Hometown</label>
-                <input type="text" placeholder="Ancestral village, if applicable" />
-              </div>
-            </div>
+                <div className="fg-section-title">Personal Details</div>
+                <div className="form-row">
+                  <div className="fg">
+                    <label>Full Name *</label>
+                    <input type="text" name="full_name" placeholder="Your full name" required />
+                  </div>
+                  <div className="fg">
+                    <label>Father&apos;s / Husband&apos;s Name *</label>
+                    <input type="text" name="fathers_or_husbands_name" placeholder="As per Aadhaar" required />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="fg">
+                    <label>Date of Birth</label>
+                    <input type="date" name="dob" />
+                  </div>
+                  <div className="fg">
+                    <label>Gotra</label>
+                    <input type="text" name="gotra" placeholder="e.g. Kashyap" />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="fg">
+                    <label>Phone *</label>
+                    <input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required />
+                  </div>
+                  <div className="fg">
+                    <label>Occupation</label>
+                    <input type="text" name="occupation" placeholder="e.g. Student, Business" />
+                  </div>
+                </div>
+                <div className="fg">
+                  <label>Native Village / Hometown</label>
+                  <input type="text" name="native_village" placeholder="Ancestral village, if applicable" />
+                </div>
 
-            <div className="fg-section-title">Identity Verification</div>
-            <div className="fg">
-              <label>Aadhaar Card Number *</label>
-              <input type="text" inputMode="numeric" pattern="\d{12}" maxLength={12} placeholder="12-digit Aadhaar number" required />
-            </div>
-            <p style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: "-.6rem", marginBottom: "1.4rem" }}>
-              Used only for identity verification and membership records. Kept strictly confidential.
-            </p>
+                <div className="fg-section-title">Identity Verification</div>
+                <div className="fg">
+                  <label>Aadhaar Card Number *</label>
+                  <input type="text" name="aadhaar_number" inputMode="numeric" pattern="\d{12}" maxLength={12} placeholder="12-digit Aadhaar number" required />
+                </div>
+                <p style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: "-.6rem", marginBottom: "1.4rem" }}>
+                  Used only for identity verification and membership records. Kept strictly confidential.
+                </p>
 
-            <div className="fg-section-title">Address</div>
-            <div className="fg">
-              <label>Address Line *</label>
-              <input type="text" placeholder="House no., street, area" required />
-            </div>
-            <div className="form-row">
-              <div className="fg">
-                <label>Country *</label>
-                <select required value={country} onChange={(e) => onCountryChange(e.target.value)}>
-                  {COUNTRIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-                {country === "Other" && (
-                  <input type="text" placeholder="Enter your country" required style={{ marginTop: ".6rem" }} />
-                )}
-              </div>
-              <div className="fg">
-                <label>State / Province *</label>
-                {isIndia ? (
-                  <>
-                    <select required value={state} onChange={(e) => onStateChange(e.target.value)}>
-                      <option value="" disabled>
-                        Select…
-                      </option>
-                      {STATES.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
+                <div className="fg-section-title">Address</div>
+                <div className="fg">
+                  <label>Address Line *</label>
+                  <input type="text" name="address_line" placeholder="House no., street, area" required />
+                </div>
+                <div className="form-row">
+                  <div className="fg">
+                    <label>Country *</label>
+                    <select required value={country} onChange={(e) => onCountryChange(e.target.value)}>
+                      {COUNTRIES.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
                         </option>
                       ))}
                     </select>
-                    {state === "Other" && (
-                      <input type="text" placeholder="Enter your state" required style={{ marginTop: ".6rem" }} />
-                    )}
-                  </>
-                ) : (
-                  <input type="text" placeholder="State / Province" required value={state} onChange={(e) => setState(e.target.value)} />
-                )}
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="fg">
-                <label>City *</label>
-                {isIndia ? (
-                  state === "Other" ? (
-                    <input type="text" placeholder="Enter your city" required value={city} onChange={(e) => setCity(e.target.value)} />
-                  ) : (
-                    <>
-                      <select required value={city} disabled={!state} onChange={(e) => setCity(e.target.value)}>
+                  </div>
+                  <div className="fg">
+                    <label>State / Province *</label>
+                    {isIndia ? (
+                      <select required value={state} onChange={(e) => onStateChange(e.target.value)}>
                         <option value="" disabled>
-                          {state ? "Select…" : "Select a state first"}
+                          Select…
                         </option>
-                        {cityOptions.map((c) => (
-                          <option key={c} value={c}>
-                            {c}
+                        {STATES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
                           </option>
                         ))}
                       </select>
-                      {city === "Other" && (
-                        <input type="text" placeholder="Enter your city" required style={{ marginTop: ".6rem" }} />
-                      )}
-                    </>
-                  )
-                ) : (
-                  <input type="text" placeholder="City" required value={city} onChange={(e) => setCity(e.target.value)} />
-                )}
-              </div>
-              <div className="fg">
-                <label>{isIndia ? "PIN Code" : "Postal Code"}</label>
-                {isIndia ? (
-                  <input type="text" inputMode="numeric" pattern="\d{6}" maxLength={6} placeholder="422001" />
-                ) : (
-                  <input type="text" placeholder="Postal code" />
-                )}
-              </div>
-            </div>
+                    ) : (
+                      <input type="text" placeholder="State / Province" required value={state} onChange={(e) => setState(e.target.value)} />
+                    )}
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="fg">
+                    <label>City *</label>
+                    {isIndia ? (
+                      state === "Other" ? (
+                        <input type="text" placeholder="Enter your city" required value={city} onChange={(e) => setCity(e.target.value)} />
+                      ) : (
+                        <select required value={city} disabled={!state} onChange={(e) => setCity(e.target.value)}>
+                          <option value="" disabled>
+                            {state ? "Select…" : "Select a state first"}
+                          </option>
+                          {cityOptions.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                      )
+                    ) : (
+                      <input type="text" placeholder="City" required value={city} onChange={(e) => setCity(e.target.value)} />
+                    )}
+                  </div>
+                  <div className="fg">
+                    <label>{isIndia ? "PIN Code" : "Postal Code"}</label>
+                    {isIndia ? (
+                      <input type="text" name="pin_code" inputMode="numeric" pattern="\d{6}" maxLength={6} placeholder="422001" />
+                    ) : (
+                      <input type="text" name="pin_code" placeholder="Postal code" />
+                    )}
+                  </div>
+                </div>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                border: "1.5px solid var(--rule)",
-                padding: "12px 16px",
-                margin: "1.5rem 0",
-              }}
-            >
-              <span style={{ fontSize: 13, color: "var(--ink-2)" }}>JSEC Membership — Lifetime</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: "var(--brand)" }}>₹1,100</span>
-            </div>
+                <div className="fg-section-title">Create Your Login</div>
+                <div className="fg">
+                  <label>Email *</label>
+                  <input type="email" name="email" placeholder="you@example.com" required />
+                </div>
+                <div className="form-row">
+                  <div className="fg">
+                    <label>Password *</label>
+                    <input type="password" name="password" placeholder="At least 6 characters" minLength={6} required />
+                  </div>
+                  <div className="fg">
+                    <label>Confirm Password *</label>
+                    <input type="password" name="confirmPassword" placeholder="Re-enter password" minLength={6} required />
+                  </div>
+                </div>
+                <p style={{ fontSize: 11.5, color: "var(--ink-3)", marginTop: "-.6rem", marginBottom: "1.4rem" }}>
+                  You&apos;ll use this email and password to log in and track your application status.
+                </p>
 
-            <button type="submit" className="btn btn-ink" style={{ width: "100%", justifyContent: "center", padding: 14, fontSize: 14 }}>
-              Submit Application →
-            </button>
-          </form>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    border: "1.5px solid var(--rule)",
+                    padding: "12px 16px",
+                    margin: "1.5rem 0",
+                  }}
+                >
+                  <span style={{ fontSize: 13, color: "var(--ink-2)" }}>JSEC Membership — Lifetime</span>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: "var(--brand)" }}>₹1,100</span>
+                </div>
+
+                {error && (
+                  <p style={{ fontSize: 13, color: "#B91C1C", marginBottom: "1rem" }}>{error}</p>
+                )}
+
+                <button
+                  type="submit"
+                  className="btn btn-ink"
+                  disabled={submitting}
+                  style={{ width: "100%", justifyContent: "center", padding: 14, fontSize: 14, opacity: submitting ? 0.6 : 1 }}
+                >
+                  {submitting ? "Submitting…" : "Submit Application →"}
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </>
