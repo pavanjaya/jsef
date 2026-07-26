@@ -352,6 +352,7 @@ p,blockquote,
   padding:11px 15px;outline:none;background:var(--bg);
 }
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(255,106,0,.1)}
+.fg select:disabled{background:var(--warm);color:var(--ink-3);cursor:not-allowed}
 .fg textarea{min-height:100px;resize:vertical}
 .fg-section-title{
   font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;

@@ -12,69 +12,50 @@ const PLAN_FEATS = [
   "Networking & Mentorship",
 ] as const;
 
-const CITIES = [
-  "Nashik",
-  "Nashik Road",
-  "Malegaon",
-  "Manmad",
-  "Yeola",
-  "Sinnar",
-  "Igatpuri",
-  "Deolali",
-  "Dindori",
-  "Niphad",
-  "Mumbai",
-  "Pune",
-  "Thane",
-  "Nagpur",
-  "Aurangabad (Chhatrapati Sambhajinagar)",
-  "Ahmednagar",
-  "Jalgaon",
-  "Dhule",
-  "Kolhapur",
-  "Solapur",
-  "Other",
-] as const;
+const CITIES_BY_STATE: Record<string, string[]> = {
+  Maharashtra: [
+    "Nashik", "Nashik Road", "Malegaon", "Manmad", "Yeola", "Sinnar", "Igatpuri", "Deolali", "Dindori", "Niphad",
+    "Mumbai", "Pune", "Thane", "Nagpur", "Aurangabad (Chhatrapati Sambhajinagar)", "Ahmednagar", "Jalgaon", "Dhule",
+    "Kolhapur", "Solapur",
+  ],
+  "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Tirupati"],
+  "Arunachal Pradesh": ["Itanagar", "Naharlagun"],
+  Assam: ["Guwahati", "Silchar", "Dibrugarh"],
+  Bihar: ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur"],
+  Chhattisgarh: ["Raipur", "Bhilai", "Bilaspur"],
+  Goa: ["Panaji", "Margao", "Vasco da Gama"],
+  Gujarat: ["Ahmedabad", "Surat", "Vadodara", "Rajkot"],
+  Haryana: ["Gurugram", "Faridabad", "Panipat", "Ambala"],
+  "Himachal Pradesh": ["Shimla", "Dharamshala", "Manali"],
+  Jharkhand: ["Ranchi", "Jamshedpur", "Dhanbad"],
+  Karnataka: ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru"],
+  Kerala: ["Kochi", "Thiruvananthapuram", "Kozhikode"],
+  "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior"],
+  Manipur: ["Imphal"],
+  Meghalaya: ["Shillong"],
+  Mizoram: ["Aizawl"],
+  Nagaland: ["Kohima", "Dimapur"],
+  Odisha: ["Bhubaneswar", "Cuttack", "Rourkela"],
+  Punjab: ["Ludhiana", "Amritsar", "Jalandhar"],
+  Rajasthan: ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer"],
+  Sikkim: ["Gangtok"],
+  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli"],
+  Telangana: ["Hyderabad", "Warangal"],
+  Tripura: ["Agartala"],
+  "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Noida"],
+  Uttarakhand: ["Dehradun", "Haridwar", "Nainital"],
+  "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Siliguri"],
+  "Andaman and Nicobar Islands": ["Port Blair"],
+  Chandigarh: ["Chandigarh"],
+  "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Silvassa"],
+  Delhi: ["New Delhi"],
+  "Jammu and Kashmir": ["Srinagar", "Jammu"],
+  Ladakh: ["Leh"],
+  Lakshadweep: ["Kavaratti"],
+  Puducherry: ["Puducherry"],
+};
 
-const STATES = [
-  "Maharashtra",
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhattisgarh",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Manipur",
-  "Meghalaya",
-  "Mizoram",
-  "Nagaland",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Sikkim",
-  "Tamil Nadu",
-  "Telangana",
-  "Tripura",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal",
-  "Andaman and Nicobar Islands",
-  "Chandigarh",
-  "Dadra and Nagar Haveli and Daman and Diu",
-  "Delhi",
-  "Jammu and Kashmir",
-  "Ladakh",
-  "Lakshadweep",
-  "Puducherry",
-  "Other",
-] as const;
+const STATES = [...Object.keys(CITIES_BY_STATE).sort((a, b) => (a === "Maharashtra" ? -1 : b === "Maharashtra" ? 1 : a.localeCompare(b))), "Other"];
 
 const COUNTRIES = ["India", "United States", "United Kingdom", "United Arab Emirates", "Canada", "Australia", "Other"] as const;
 
@@ -122,6 +103,13 @@ export default function MembershipApplication() {
     alert("Thank you! Application submitted. We will contact you within 5–7 business days.");
     closeModal();
   };
+
+  const onStateChange = (value: string) => {
+    setState(value);
+    setCity("");
+  };
+
+  const cityOptions = state && state !== "Other" ? [...(CITIES_BY_STATE[state] ?? []), "Other"] : [];
 
   return (
     <>
@@ -232,24 +220,8 @@ export default function MembershipApplication() {
             </div>
             <div className="form-row">
               <div className="fg">
-                <label>City *</label>
-                <select required value={city} onChange={(e) => setCity(e.target.value)}>
-                  <option value="" disabled>
-                    Select…
-                  </option>
-                  {CITIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-                {city === "Other" && (
-                  <input type="text" placeholder="Enter your city" required style={{ marginTop: ".6rem" }} />
-                )}
-              </div>
-              <div className="fg">
                 <label>State *</label>
-                <select required value={state} onChange={(e) => setState(e.target.value)}>
+                <select required value={state} onChange={(e) => onStateChange(e.target.value)}>
                   <option value="" disabled>
                     Select…
                   </option>
@@ -261,6 +233,26 @@ export default function MembershipApplication() {
                 </select>
                 {state === "Other" && (
                   <input type="text" placeholder="Enter your state" required style={{ marginTop: ".6rem" }} />
+                )}
+              </div>
+              <div className="fg">
+                <label>City *</label>
+                {state === "Other" ? (
+                  <input type="text" placeholder="Enter your city" required onChange={(e) => setCity(e.target.value)} />
+                ) : (
+                  <select required value={city} disabled={!state} onChange={(e) => setCity(e.target.value)}>
+                    <option value="" disabled>
+                      {state ? "Select…" : "Select a state first"}
+                    </option>
+                    {cityOptions.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {city === "Other" && (
+                  <input type="text" placeholder="Enter your city" required style={{ marginTop: ".6rem" }} />
                 )}
               </div>
             </div>
