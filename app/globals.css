@@ -11,7 +11,7 @@
   --ease-in-out:cubic-bezier(0.76,0,0.24,1);
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--f);background:var(--bg);color:var(--ink);overflow-x:hidden;line-height:1.65;-webkit-font-smoothing:antialiased;cursor:none}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);overflow-x:hidden;line-height:1.65;-webkit-font-smoothing:antialiased}
 
 
 /* ─── LOADER ─── */
@@ -39,13 +39,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--ink);overflow-x:hidde
 }
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:.8}}
 
-/* ─── CURSOR ─── */
-#cursor{position:fixed;z-index:9999;pointer-events:none;mix-blend-mode:difference}
-#cursor-dot{width:8px;height:8px;background:#fff;border-radius:50%;position:absolute;transform:translate(-50%,-50%);transition:transform .15s var(--ease-out-expo)}
-#cursor-ring{width:36px;height:36px;border:1.5px solid rgba(255,255,255,.6);border-radius:50%;position:absolute;transform:translate(-50%,-50%);transition:width .35s var(--ease-out-expo),height .35s var(--ease-out-expo),border-color .35s}
-body.cursor-hover #cursor-dot{transform:translate(-50%,-50%) scale(2)}
-body.cursor-hover #cursor-ring{width:56px;height:56px;border-color:rgba(255,255,255,.9)}
-
 /* ─── NAV ─── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:500;height:80px;
@@ -53,10 +46,9 @@ nav{
   transition:background .4s,backdrop-filter .4s,border-color .4s;
   border-bottom:1px solid transparent;
 }
-nav.scrolled{background:#fff;backdrop-filter:none;border-color:var(--rule)}
-.nav-logo{cursor:pointer;display:flex;align-items:center}
-.nav-logo svg{height:36px;width:auto;display:block;transition:opacity .2s}
-.nav-logo:hover svg{opacity:.7}
+nav.scrolled{background:var(--bg);backdrop-filter:none;border-color:var(--rule)}
+.nav-logo{display:flex;align-items:center;transition:opacity .2s}
+.nav-logo:hover{opacity:.7}
 .nav-links{list-style:none;display:flex;align-items:center;gap:2rem}
 .nav-links a{font-size:13px;font-weight:500;color:var(--ink-2);text-decoration:none;letter-spacing:.2px;cursor:pointer;position:relative;padding-bottom:2px}
 .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--brand);transition:width .3s var(--ease-out-expo)}
@@ -646,8 +638,6 @@ footer{background:var(--footer-bg);padding:5.5rem 0 2.5rem;border-top:1px solid 
   .mag-grid{grid-template-columns:1fr}
   .gal-grid{grid-template-columns:1fr 1fr}
   .gal-wide{grid-column:span 1;aspect-ratio:1}
-  body{cursor:auto}
-  #cursor{display:none}
 }
 
 /* ─── PAGE TRANSITION ─── */

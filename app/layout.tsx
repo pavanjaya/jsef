@@ -3,7 +3,6 @@ import { IBM_Plex_Serif } from "next/font/google";
 import "./globals.css";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
-import CustomCursor from "./components/CustomCursor";
 import Loader from "./components/Loader";
 
 const plexSerif = IBM_Plex_Serif({
@@ -31,7 +30,6 @@ export default function RootLayout({
       </head>
       <body>
         <Loader />
-        <CustomCursor />
         <Nav />
         {children}
         <Footer />

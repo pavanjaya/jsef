@@ -37,7 +37,7 @@ export default function Nav() {
     <>
       <nav id="topnav" className={scrolled ? "scrolled" : ""}>
         <Link href="/" className="nav-logo">
-          <img src="/images/logo-wordmark.svg" style={{ height: 30, width: "auto" }} alt="JSEF" />
+          <img src="/images/logo-wordmark.svg" style={{ height: 39, width: "auto" }} alt="JSEF" />
         </Link>
         <ul className="nav-links">
           {LINKS.map((l) => (
