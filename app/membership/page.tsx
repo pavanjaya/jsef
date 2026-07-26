@@ -6,6 +6,29 @@ export const metadata: Metadata = {
   title: "Membership — JSEC",
 };
 
+const ELIGIBILITY = [
+  {
+    icon: "🪪",
+    title: "Community Lineage",
+    desc: "Open to individuals of the Jangid community by birth or marriage, and their immediate family.",
+  },
+  {
+    icon: "🎂",
+    title: "18 Years or Older",
+    desc: "Applicants must be at least 18 years old at the time of application.",
+  },
+  {
+    icon: "🌍",
+    title: "Anywhere You Are",
+    desc: "Open to Jangid families across Nashik, the rest of India, and the global diaspora.",
+  },
+  {
+    icon: "🤝",
+    title: "Good Standing",
+    desc: "No history of conduct that conflicts with JSEC's values of service and integrity.",
+  },
+] as const;
+
 const BENEFITS = [
   {
     icon: "M20 12c0-1.1.9-2 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2zm-6 5.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z",
@@ -40,11 +63,12 @@ const BENEFITS = [
 ] as const;
 
 const STEPS = [
-  { n: "01", title: "Apply Online", desc: "Fill out the application form below with your details and submit." },
+  { n: "01", title: "Apply Online", desc: "Fill out the application form with your details and submit." },
   { n: "02", title: "Committee Review", desc: "Our governing body reviews your application within 5–7 business days." },
   { n: "03", title: "Welcome Aboard", desc: "Once approved, you're a lifetime member — start enjoying every benefit right away." },
 ] as const;
 
+const ELIGIBILITY_DELAYS = [1, 2, 3, 4] as const;
 const BENEFIT_DELAYS = [1, 2, 1, 2, 3, 4] as const;
 const STEP_DELAYS = [1, 2, 3] as const;
 
@@ -67,6 +91,32 @@ export default function MembershipPage() {
           </Reveal>
         </div>
       </div>
+
+      <section className="sec" style={{ background: "var(--surface)", paddingTop: "5rem" }}>
+        <div className="wrap">
+          <Reveal as="span" className="eyebrow">
+            Who Can Join
+          </Reveal>
+          <Reveal as="h2" className="h2" delay={1}>
+            Open to every
+            <br />
+            <em>Jangid family.</em>
+          </Reveal>
+          <div className="eligibility-grid">
+            {ELIGIBILITY.map((e, i) => (
+              <Reveal as="div" className="cnt-item" delay={ELIGIBILITY_DELAYS[i]} key={e.title} style={{ marginBottom: 0 }}>
+                <div className="cnt-icon">{e.icon}</div>
+                <div>
+                  <div className="cnt-label">{e.title}</div>
+                  <div className="cnt-val">{e.desc}</div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="rule-line"></div>
 
       <section className="sec" style={{ background: "var(--warm)" }}>
         <div className="wrap">
@@ -94,13 +144,27 @@ export default function MembershipPage() {
         </div>
       </section>
 
+      <div className="rule-line"></div>
+
       <section className="sec" style={{ background: "var(--surface)" }}>
         <div className="wrap">
+          <Reveal as="span" className="eyebrow" style={{ textAlign: "center", display: "block" }}>
+            Join Today
+          </Reveal>
+          <Reveal as="h2" className="h2" delay={1} style={{ textAlign: "center" }}>
+            Ready when
+            <br />
+            <em>you are.</em>
+          </Reveal>
+
           <MembershipApplication />
 
           <div className="mem-steps">
-            <Reveal as="h2" className="h2" style={{ textAlign: "center", marginBottom: "1rem" }}>
-              How it works
+            <Reveal as="span" className="eyebrow" style={{ textAlign: "center", display: "block" }}>
+              How It Works
+            </Reveal>
+            <Reveal as="h3" className="h3" style={{ textAlign: "center", marginBottom: "1rem" }}>
+              Three steps to membership.
             </Reveal>
             <div className="val-list">
               {STEPS.map((s, i) => (
