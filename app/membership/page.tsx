@@ -6,34 +6,47 @@ export const metadata: Metadata = {
   title: "Membership — JSEC",
 };
 
-const PLANS = [
+const BENEFITS = [
   {
-    name: "Student Member",
-    price: "₹200",
-    period: "5 year membership",
-    feats: ["All community events", "Scholarship eligibility", "JangidTimes subscription", "Community networking"],
-    btnClass: "btn-ghost",
-    featured: false,
+    icon: "M20 12c0-1.1.9-2 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2zm-6 5.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z",
+    title: "Full Event Access",
+    desc: "Free or discounted entry to every JSEC tournament, workshop, and festival throughout the year.",
   },
   {
-    name: "General Member",
-    price: "₹500",
-    period: "5 year membership",
-    feats: ["Full event access", "Voting rights", "Business directory listing", "Leadership eligibility", "JangidTimes subscription"],
-    btnClass: "btn-brand",
-    featured: true,
+    icon: "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+    title: "Voting & Leadership Rights",
+    desc: "A voice in committee elections, and eligibility to stand for leadership positions yourself.",
   },
   {
-    name: "Managing Committee",
-    price: "₹5,100",
-    period: "Lifetime membership",
-    feats: ["All General benefits", "Committee decisions", "Priority event access", "Annual recognition", "Mentorship access"],
-    btnClass: "btn-ink",
-    featured: false,
+    icon: "M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z",
+    title: "Scholarship Eligibility",
+    desc: "Access to merit- and need-based scholarships for members and their families.",
+  },
+  {
+    icon: "M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z",
+    title: "Business Directory Listing",
+    desc: "Get your business listed in our community directory, seen by 1,200+ members across Nashik.",
+  },
+  {
+    icon: "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H7v-2h3v2zm0-4H7v-2h3v2zm0-4H7V7h3v2zm7 8h-5v-2h5v2zm0-4h-5v-2h5v2zm0-4h-5V7h5v2z",
+    title: "JangidTimes Subscription",
+    desc: "Receive our community magazine, with stories, achievements, and updates from across JSEC.",
+  },
+  {
+    icon: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+    title: "Networking & Mentorship",
+    desc: "Connect with community leaders, professionals, and mentors across generations.",
   },
 ] as const;
 
-const DELAYS = [0, 1, 2] as const;
+const STEPS = [
+  { n: "01", title: "Apply Online", desc: "Fill out the application form below with your details and submit." },
+  { n: "02", title: "Committee Review", desc: "Our governing body reviews your application within 5–7 business days." },
+  { n: "03", title: "Welcome Aboard", desc: "Once approved, you're a lifetime member — start enjoying every benefit right away." },
+] as const;
+
+const BENEFIT_DELAYS = [1, 2, 1, 2, 3, 4] as const;
+const STEP_DELAYS = [1, 2, 3] as const;
 
 export default function MembershipPage() {
   return (
@@ -48,30 +61,74 @@ export default function MembershipPage() {
             <br />
             of the <em>story.</em>
           </Reveal>
-          <Reveal as="p" className="lead" delay={2} style={{ maxWidth: 500 }}>
-            Whether you want to play, learn, mentor, or contribute — there&apos;s a place for you here.
+          <Reveal as="p" className="lead" delay={2} style={{ maxWidth: 560 }}>
+            Whether you want to play, learn, mentor, or contribute — a single JSEC membership opens every door.
+            No tiers, no renewals, just one community for life.
           </Reveal>
         </div>
       </div>
-      <section className="sec" style={{ background: "var(--surface)" }}>
+
+      <section className="sec" style={{ background: "var(--warm)" }}>
         <div className="wrap">
-          <div className="mem-plans">
-            {PLANS.map((plan, i) => (
-              <Reveal className={`mem-plan${plan.featured ? " featured" : ""}`} delay={DELAYS[i] || undefined} key={plan.name}>
-                <div className="mem-plan-name">{plan.name}</div>
-                <div className="mem-plan-price">{plan.price}</div>
-                <div className="mem-plan-period">{plan.period}</div>
-                <ul className="mem-plan-feats">
-                  {plan.feats.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-                <a href="#mem-form-sec" className={`btn ${plan.btnClass}`} style={{ width: "100%", justifyContent: "center" }}>
-                  Apply →
-                </a>
+          <Reveal as="span" className="eyebrow">
+            Member Benefits
+          </Reveal>
+          <Reveal as="h2" className="h2" delay={1}>
+            Everything you need to
+            <br />
+            <em>stay involved.</em>
+          </Reveal>
+          <div className="mem-benefits-grid">
+            {BENEFITS.map((b, i) => (
+              <Reveal className="pillar-item" delay={BENEFIT_DELAYS[i]} key={b.title}>
+                <div className="pillar-ico">
+                  <svg viewBox="0 0 24 24">
+                    <path d={b.icon} />
+                  </svg>
+                </div>
+                <div className="pillar-title">{b.title}</div>
+                <p className="pillar-desc">{b.desc}</p>
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="sec" style={{ background: "var(--surface)" }}>
+        <div className="wrap">
+          <div className="mem-plans">
+            <Reveal className="mem-plan featured">
+              <div className="mem-plan-name">JSEC Membership</div>
+              <div className="mem-plan-price">₹1,100</div>
+              <div className="mem-plan-period">Lifetime membership · one-time fee</div>
+              <ul className="mem-plan-feats">
+                {BENEFITS.map((b) => (
+                  <li key={b.title}>{b.title}</li>
+                ))}
+              </ul>
+              <a href="#mem-form-sec" className="btn btn-brand" style={{ width: "100%", justifyContent: "center" }}>
+                Apply Now →
+              </a>
+            </Reveal>
+          </div>
+
+          <div className="mem-steps">
+            <Reveal as="h2" className="h2" style={{ textAlign: "center", marginBottom: "1rem" }}>
+              How it works
+            </Reveal>
+            <div className="val-list">
+              {STEPS.map((s, i) => (
+                <Reveal as="div" className="val-row" delay={STEP_DELAYS[i]} key={s.n}>
+                  <span className="val-n">{s.n}</span>
+                  <div>
+                    <div className="val-title">{s.title}</div>
+                    <div className="val-desc">{s.desc}</div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+
           <MembershipForm />
         </div>
       </section>
