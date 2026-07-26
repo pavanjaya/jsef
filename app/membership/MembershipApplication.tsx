@@ -104,12 +104,19 @@ export default function MembershipApplication() {
     closeModal();
   };
 
+  const onCountryChange = (value: string) => {
+    setCountry(value);
+    setState("");
+    setCity("");
+  };
+
   const onStateChange = (value: string) => {
     setState(value);
     setCity("");
   };
 
-  const cityOptions = state && state !== "Other" ? [...(CITIES_BY_STATE[state] ?? []), "Other"] : [];
+  const isIndia = country === "India";
+  const cityOptions = isIndia && state && state !== "Other" ? [...(CITIES_BY_STATE[state] ?? []), "Other"] : [];
 
   return (
     <>
@@ -220,50 +227,8 @@ export default function MembershipApplication() {
             </div>
             <div className="form-row">
               <div className="fg">
-                <label>State *</label>
-                <select required value={state} onChange={(e) => onStateChange(e.target.value)}>
-                  <option value="" disabled>
-                    Select…
-                  </option>
-                  {STATES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-                {state === "Other" && (
-                  <input type="text" placeholder="Enter your state" required style={{ marginTop: ".6rem" }} />
-                )}
-              </div>
-              <div className="fg">
-                <label>City *</label>
-                {state === "Other" ? (
-                  <input type="text" placeholder="Enter your city" required onChange={(e) => setCity(e.target.value)} />
-                ) : (
-                  <select required value={city} disabled={!state} onChange={(e) => setCity(e.target.value)}>
-                    <option value="" disabled>
-                      {state ? "Select…" : "Select a state first"}
-                    </option>
-                    {cityOptions.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                {city === "Other" && (
-                  <input type="text" placeholder="Enter your city" required style={{ marginTop: ".6rem" }} />
-                )}
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="fg">
-                <label>PIN Code</label>
-                <input type="text" inputMode="numeric" pattern="\d{6}" maxLength={6} placeholder="422001" />
-              </div>
-              <div className="fg">
                 <label>Country *</label>
-                <select required value={country} onChange={(e) => setCountry(e.target.value)}>
+                <select required value={country} onChange={(e) => onCountryChange(e.target.value)}>
                   {COUNTRIES.map((c) => (
                     <option key={c} value={c}>
                       {c}
@@ -272,6 +237,64 @@ export default function MembershipApplication() {
                 </select>
                 {country === "Other" && (
                   <input type="text" placeholder="Enter your country" required style={{ marginTop: ".6rem" }} />
+                )}
+              </div>
+              <div className="fg">
+                <label>State / Province *</label>
+                {isIndia ? (
+                  <>
+                    <select required value={state} onChange={(e) => onStateChange(e.target.value)}>
+                      <option value="" disabled>
+                        Select…
+                      </option>
+                      {STATES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                    {state === "Other" && (
+                      <input type="text" placeholder="Enter your state" required style={{ marginTop: ".6rem" }} />
+                    )}
+                  </>
+                ) : (
+                  <input type="text" placeholder="State / Province" required value={state} onChange={(e) => setState(e.target.value)} />
+                )}
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="fg">
+                <label>City *</label>
+                {isIndia ? (
+                  state === "Other" ? (
+                    <input type="text" placeholder="Enter your city" required value={city} onChange={(e) => setCity(e.target.value)} />
+                  ) : (
+                    <>
+                      <select required value={city} disabled={!state} onChange={(e) => setCity(e.target.value)}>
+                        <option value="" disabled>
+                          {state ? "Select…" : "Select a state first"}
+                        </option>
+                        {cityOptions.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                      {city === "Other" && (
+                        <input type="text" placeholder="Enter your city" required style={{ marginTop: ".6rem" }} />
+                      )}
+                    </>
+                  )
+                ) : (
+                  <input type="text" placeholder="City" required value={city} onChange={(e) => setCity(e.target.value)} />
+                )}
+              </div>
+              <div className="fg">
+                <label>{isIndia ? "PIN Code" : "Postal Code"}</label>
+                {isIndia ? (
+                  <input type="text" inputMode="numeric" pattern="\d{6}" maxLength={6} placeholder="422001" />
+                ) : (
+                  <input type="text" placeholder="Postal code" />
                 )}
               </div>
             </div>
