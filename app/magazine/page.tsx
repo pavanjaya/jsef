@@ -1,0 +1,66 @@
+import type { Metadata } from "next";
+import Reveal from "../components/Reveal";
+
+export const metadata: Metadata = {
+  title: "Magazine — JSEC",
+};
+
+const SIDEBAR = [
+  { tag: "Sports · Feb 2025", title: "How Box Cricket Became Our Biggest Event Yet" },
+  { tag: "Education · Jan 2025", title: "Meet the 2025 Scholarship Recipients" },
+  { tag: "Culture · Dec 2024", title: "Heritage Festival: A Night to Remember" },
+  { tag: "Community · Nov 2024", title: "Our Members Share Their Stories" },
+] as const;
+
+export default function MagazinePage() {
+  return (
+    <div className="page page-fade">
+      <div className="mag-hero">
+        <div className="wrap">
+          <Reveal as="span" className="eyebrow" style={{ color: "rgba(255,255,255,.5)", justifyContent: "center", display: "block" }}>
+            Community Publication
+          </Reveal>
+          <Reveal as="h1" className="h1" delay={1} style={{ color: "#fff", marginBottom: ".8rem", textAlign: "center" }}>
+            JangidTimes
+          </Reveal>
+          <Reveal
+            as="p"
+            className="lead"
+            delay={2}
+            style={{ color: "rgba(255,255,255,.55)", maxWidth: 440, margin: "0 auto", textAlign: "center" }}
+          >
+            Stories, achievements, and news from across the Jangid community.
+          </Reveal>
+        </div>
+      </div>
+      <section className="sec" style={{ background: "var(--surface)" }}>
+        <div className="wrap">
+          <div className="mag-grid">
+            <Reveal className="mag-feat">
+              <div className="mag-feat-img">📰</div>
+              <div className="mag-feat-body">
+                <span className="evp-tag">Latest · March 2025</span>
+                <div className="ev-title" style={{ fontSize: 22, marginBottom: ".7rem" }}>
+                  Champions, Scholars & New Beginnings
+                </div>
+                <p style={{ fontSize: 14, color: "var(--ink-2)", lineHeight: 1.8, marginBottom: "1.8rem" }}>
+                  Featuring the JBCL 2025 champions, scholarship winners, and an exclusive interview with the
+                  Governing Body.
+                </p>
+                <button className="btn btn-ink">Read Now →</button>
+              </div>
+            </Reveal>
+            <Reveal className="mag-sidebar" delay={2}>
+              {SIDEBAR.map((item) => (
+                <div className="mag-item" key={item.title}>
+                  <span className="mag-item-tag">{item.tag}</span>
+                  <div className="mag-item-title">{item.title}</div>
+                </div>
+              ))}
+            </Reveal>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
