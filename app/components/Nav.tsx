@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "../../lib/supabase/client";
+import LoginModal from "./LoginModal";
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -22,6 +23,7 @@ export default function Nav() {
   const [mobOpen, setMobOpen] = useState(false);
   const [lastPathname, setLastPathname] = useState(pathname);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   if (pathname !== lastPathname) {
     setLastPathname(pathname);
@@ -63,9 +65,16 @@ export default function Nav() {
           ))}
           {!isLoggedIn && (
             <li>
-              <Link href="/login" className={pathname === "/login" ? "active" : ""}>
+              <a
+                href="/login"
+                className={pathname === "/login" ? "active" : ""}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setLoginOpen(true);
+                }}
+              >
                 Login
-              </Link>
+              </a>
             </li>
           )}
           <li>
@@ -95,10 +104,20 @@ export default function Nav() {
             {l.label}
           </Link>
         ))}
-        <Link href={isLoggedIn ? "/account" : "/login"} onClick={() => setMobOpen(false)}>
+        <Link
+          href={isLoggedIn ? "/account" : "/login"}
+          onClick={(e) => {
+            setMobOpen(false);
+            if (!isLoggedIn) {
+              e.preventDefault();
+              setLoginOpen(true);
+            }
+          }}
+        >
           {isLoggedIn ? "My Account" : "Login"}
         </Link>
       </div>
+      <LoginModal open={loginOpen} onClose={() => setLoginOpen(false)} />
     </>
   );
 }

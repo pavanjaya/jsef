@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Reveal from "../components/Reveal";
 import { createClient } from "../../lib/supabase/client";
 
-export default function LoginForm() {
+export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [submitting, setSubmitting] = useState(false);
@@ -30,12 +30,13 @@ export default function LoginForm() {
       return;
     }
 
+    onSuccess?.();
     router.push(searchParams.get("next") || "/account");
     router.refresh();
   };
 
   return (
-    <Reveal as="form" className="mem-form" onSubmit={onSubmit} style={{ margin: "0 auto" }}>
+    <Reveal as="form" onSubmit={onSubmit}>
       <h3 style={{ marginBottom: "1.5rem", fontSize: 20 }}>Member Login</h3>
       <div className="fg">
         <label>Email *</label>
