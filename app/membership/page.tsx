@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Reveal from "../components/Reveal";
-import MembershipForm from "./MembershipForm";
+import MembershipApplication from "./MembershipApplication";
 
 export const metadata: Metadata = {
   title: "Membership — JSEC",
@@ -96,21 +96,7 @@ export default function MembershipPage() {
 
       <section className="sec" style={{ background: "var(--surface)" }}>
         <div className="wrap">
-          <div className="mem-plans">
-            <Reveal className="mem-plan featured">
-              <div className="mem-plan-name">JSEC Membership</div>
-              <div className="mem-plan-price">₹1,100</div>
-              <div className="mem-plan-period">Lifetime membership · one-time fee</div>
-              <ul className="mem-plan-feats">
-                {BENEFITS.map((b) => (
-                  <li key={b.title}>{b.title}</li>
-                ))}
-              </ul>
-              <a href="#mem-form-sec" className="btn btn-brand" style={{ width: "100%", justifyContent: "center" }}>
-                Apply Now →
-              </a>
-            </Reveal>
-          </div>
+          <MembershipApplication />
 
           <div className="mem-steps">
             <Reveal as="h2" className="h2" style={{ textAlign: "center", marginBottom: "1rem" }}>
@@ -128,8 +114,6 @@ export default function MembershipPage() {
               ))}
             </div>
           </div>
-
-          <MembershipForm />
         </div>
       </section>
     </div>
