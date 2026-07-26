@@ -25,28 +25,49 @@ const STATUS_COPY: Record<string, { label: string; className: string; message: s
   },
 };
 
+const SUPABASE_CONFIGURED = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+// Shown only while Supabase isn't configured, so the page can be previewed.
+const PREVIEW_MEMBER = {
+  full_name: "Pavan Tarachand Jangid",
+  status: "approved",
+  member_id: "JSEC-2026-00012",
+};
+
 export default async function AccountPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let email = "you@example.com";
+  let member: { full_name: string; status: string; member_id: string | null } = PREVIEW_MEMBER;
 
-  if (!user) redirect("/login");
+  if (SUPABASE_CONFIGURED) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const { data: member } = await supabase.from("members").select("*").eq("id", user.id).single();
+    if (!user) redirect("/login");
+    email = user.email ?? email;
 
-  const status = STATUS_COPY[member?.status as string] ?? STATUS_COPY.pending;
+    const { data } = await supabase.from("members").select("*").eq("id", user.id).single();
+    member = data ?? { full_name: "", status: "pending", member_id: null };
+  }
+
+  const status = STATUS_COPY[member.status] ?? STATUS_COPY.pending;
 
   return (
     <div className="page">
+      {!SUPABASE_CONFIGURED && (
+        <div style={{ background: "var(--accent-orange)", color: "#fff", textAlign: "center", padding: "10px", fontSize: 13, fontWeight: 600 }}>
+          Preview mode — showing sample data. Connect Supabase to make this page real.
+        </div>
+      )}
       <div className="page-banner">
         <div className="wrap">
           <span className="eyebrow">My Account</span>
           <h1 className="h1" style={{ maxWidth: 600, marginBottom: ".4rem" }}>
-            {member?.full_name || "Welcome"}
+            {member.full_name || "Welcome"}
           </h1>
           <p className="lead" style={{ maxWidth: 500 }}>
-            {user.email}
+            {email}
           </p>
         </div>
       </div>
@@ -57,7 +78,7 @@ export default async function AccountPage() {
             <span className={`status-badge ${status.className}`}>{status.label}</span>
             <p style={{ fontSize: 14, color: "var(--ink-2)", lineHeight: 1.7, margin: "1rem 0 0" }}>{status.message}</p>
 
-            {member?.status === "approved" && (
+            {member.status === "approved" && (
               <>
                 <div
                   style={{
@@ -83,11 +104,13 @@ export default async function AccountPage() {
               </>
             )}
 
-            <form action={signOut} style={{ marginTop: "2rem" }}>
-              <button type="submit" className="btn btn-ghost" style={{ width: "100%", justifyContent: "center" }}>
-                Log Out
-              </button>
-            </form>
+            {SUPABASE_CONFIGURED && (
+              <form action={signOut} style={{ marginTop: "2rem" }}>
+                <button type="submit" className="btn btn-ghost" style={{ width: "100%", justifyContent: "center" }}>
+                  Log Out
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </section>
