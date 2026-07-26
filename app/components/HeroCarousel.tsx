@@ -71,7 +71,6 @@ export default function HeroCarousel() {
   const [barOn, setBarOn] = useState(false);
   const [hintHidden, setHintHidden] = useState(false);
 
-  const heroRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<[number, number]>([0, 0]);
@@ -131,16 +130,9 @@ export default function HeroCarousel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // scroll hint + parallax
+  // scroll hint
   useEffect(() => {
-    const onScroll = () => {
-      setHintHidden(window.scrollY > 80);
-      const hero = heroRef.current;
-      if (!hero) return;
-      hero.querySelectorAll<HTMLElement>(".slide-img").forEach((img) => {
-        img.style.transform = `translateY(${window.scrollY * 0.25}px)`;
-      });
-    };
+    const onScroll = () => setHintHidden(window.scrollY > 80);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -158,7 +150,7 @@ export default function HeroCarousel() {
   };
 
   return (
-    <div id="h-hero" ref={heroRef} onMouseEnter={stopCarousel} onMouseLeave={startCarousel} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    <div id="h-hero" onMouseEnter={stopCarousel} onMouseLeave={startCarousel} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <div className="carousel-track">
         {SLIDES.map((slide, i) => {
           const cls = ["carousel-slide", i === activeIndex ? "active" : "", i === leavingIndex ? "leaving" : ""]
