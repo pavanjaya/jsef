@@ -3,7 +3,6 @@ import { IBM_Plex_Serif } from "next/font/google";
 import "./globals.css";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
-import Loader from "./components/Loader";
 
 const plexSerif = IBM_Plex_Serif({
   variable: "--font-plex-serif",
@@ -29,7 +28,6 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" />
       </head>
       <body>
-        <Loader />
         <Nav />
         {children}
         <Footer />

@@ -50,7 +50,7 @@ const STEP_DELAYS = [1, 2, 3] as const;
 
 export default function MembershipPage() {
   return (
-    <div className="page page-fade">
+    <div className="page">
       <div className="page-banner">
         <div className="wrap">
           <Reveal as="span" className="eyebrow">

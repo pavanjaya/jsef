@@ -67,77 +67,28 @@ const INTERVAL_MS = 5000;
 
 export default function HeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
-  const [barOn, setBarOn] = useState(false);
-  const [hintHidden, setHintHidden] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const rafRef = useRef<[number, number]>([0, 0]);
   const touchStartX = useRef(0);
 
-  const restartProgress = () => {
-    cancelAnimationFrame(rafRef.current[0]);
-    cancelAnimationFrame(rafRef.current[1]);
-    setBarOn(false);
-    rafRef.current[0] = requestAnimationFrame(() => {
-      rafRef.current[1] = requestAnimationFrame(() => setBarOn(true));
-    });
-  };
-
-  const goTo = (n: number) => {
-    setActiveIndex((prev) => {
-      if (prev === n) return prev;
-      setLeavingIndex(prev);
-      if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
-      leaveTimeoutRef.current = setTimeout(() => setLeavingIndex(null), 1000);
-      return n;
-    });
-    restartProgress();
-  };
-
-  const next = () => goTo((activeIndex + 1) % TOTAL);
-  const prev = () => goTo((activeIndex - 1 + TOTAL) % TOTAL);
+  const goTo = (n: number) => setActiveIndex(n);
+  const next = () => setActiveIndex((i) => (i + 1) % TOTAL);
+  const prev = () => setActiveIndex((i) => (i - 1 + TOTAL) % TOTAL);
 
   const stopCarousel = () => {
     if (timerRef.current) clearInterval(timerRef.current);
   };
   const startCarousel = () => {
     stopCarousel();
-    timerRef.current = setInterval(() => {
-      setActiveIndex((current) => {
-        const n = (current + 1) % TOTAL;
-        setLeavingIndex(current);
-        if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
-        leaveTimeoutRef.current = setTimeout(() => setLeavingIndex(null), 1000);
-        return n;
-      });
-      restartProgress();
-    }, INTERVAL_MS);
+    timerRef.current = setInterval(() => setActiveIndex((i) => (i + 1) % TOTAL), INTERVAL_MS);
   };
 
-  // autoplay + initial progress bar
   useEffect(() => {
     startCarousel();
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- kicks off the CSS width transition on mount, same as on every slide change
-    restartProgress();
-    const raf = rafRef.current;
-    return () => {
-      stopCarousel();
-      cancelAnimationFrame(raf[0]);
-      cancelAnimationFrame(raf[1]);
-    };
+    return stopCarousel;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // scroll hint
-  useEffect(() => {
-    const onScroll = () => setHintHidden(window.scrollY > 80);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // touch swipe
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -152,37 +103,32 @@ export default function HeroCarousel() {
   return (
     <div id="h-hero" onMouseEnter={stopCarousel} onMouseLeave={startCarousel} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <div className="carousel-track">
-        {SLIDES.map((slide, i) => {
-          const cls = ["carousel-slide", i === activeIndex ? "active" : "", i === leavingIndex ? "leaving" : ""]
-            .filter(Boolean)
-            .join(" ");
-          return (
-            <div className={cls} key={i}>
-              <div className="slide-img" style={{ background: slide.bg }}></div>
-              <div className="slide-overlay" style={slide.overlay ? { background: slide.overlay } : undefined}></div>
-              <div className="slide-content">
-                <span className="slide-tag">{slide.tag}</span>
-                <h1 className="slide-title">{slide.title}</h1>
-                <p className="slide-desc">{slide.desc}</p>
-                <div className="slide-btns">
-                  <Link href={slide.primary.href} className="btn btn-brand">
-                    {slide.primary.label}
-                  </Link>
-                  <Link
-                    href={slide.secondary.href}
-                    className="btn btn-ghost"
-                    style={{ color: "#fff", borderColor: "rgba(255,255,255,.3)", background: "rgba(255,255,255,.08)", backdropFilter: "blur(8px)" }}
-                  >
-                    {slide.secondary.label}
-                  </Link>
-                </div>
+        {SLIDES.map((slide, i) => (
+          <div className={`carousel-slide${i === activeIndex ? " active" : ""}`} key={i}>
+            <div className="slide-img" style={{ background: slide.bg }}></div>
+            <div className="slide-overlay" style={slide.overlay ? { background: slide.overlay } : undefined}></div>
+            <div className="slide-content">
+              <span className="slide-tag">{slide.tag}</span>
+              <h1 className="slide-title">{slide.title}</h1>
+              <p className="slide-desc">{slide.desc}</p>
+              <div className="slide-btns">
+                <Link href={slide.primary.href} className="btn btn-brand">
+                  {slide.primary.label}
+                </Link>
+                <Link
+                  href={slide.secondary.href}
+                  className="btn btn-ghost"
+                  style={{ color: "#fff", borderColor: "rgba(255,255,255,.3)", background: "rgba(255,255,255,.08)", backdropFilter: "blur(8px)" }}
+                >
+                  {slide.secondary.label}
+                </Link>
               </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
-      <div className={`scroll-hint${hintHidden ? " hidden" : ""}`}>
+      <div className="scroll-hint">
         <div className="scroll-mouse"></div>
         <span>Scroll</span>
       </div>
@@ -191,9 +137,6 @@ export default function HeroCarousel() {
         {SLIDES.map((_, i) => (
           <button key={i} className={`cdot${i === activeIndex ? " active" : ""}`} onClick={() => goTo(i)}></button>
         ))}
-      </div>
-      <div className="carousel-progress">
-        <div className={`carousel-progress-bar${barOn ? " animating" : ""}`}></div>
       </div>
     </div>
   );

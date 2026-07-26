@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function DirectoryPage() {
   return (
-    <div className="page page-fade">
+    <div className="page">
       <div className="page-banner">
         <div className="wrap">
           <Reveal as="span" className="eyebrow">

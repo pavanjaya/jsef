@@ -46,7 +46,7 @@ const DELAYS = [1, 2, 3, 4, 5] as const;
 
 export default function HomePage() {
   return (
-    <div className="page page-fade">
+    <div className="page">
       <HeroCarousel />
 
       <div id="h-stats">

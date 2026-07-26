@@ -40,15 +40,8 @@ const DELAYS = [1, 2, 1, 2, 3, 4] as const;
 export default function GalleryClient() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [fading, setFading] = useState(false);
 
-  const changePhoto = (next: number) => {
-    setFading(true);
-    setTimeout(() => {
-      setPhotoIndex(next);
-      setFading(false);
-    }, 150);
-  };
+  const changePhoto = (next: number) => setPhotoIndex(next);
 
   const open = (idx: number) => {
     setOpenIndex(idx);
@@ -137,8 +130,6 @@ export default function GalleryClient() {
                   justifyContent: "center",
                   fontSize: 80,
                   boxShadow: "0 8px 48px rgba(0,0,0,.5)",
-                  transition: "opacity .25s",
-                  opacity: fading ? 0 : 1,
                   overflow: "hidden",
                   position: "relative",
                 }}

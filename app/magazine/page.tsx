@@ -14,7 +14,7 @@ const SIDEBAR = [
 
 export default function MagazinePage() {
   return (
-    <div className="page page-fade">
+    <div className="page">
       <div className="mag-hero">
         <div className="wrap">
           <Reveal as="span" className="eyebrow" style={{ color: "rgba(255,255,255,.5)", justifyContent: "center", display: "block" }}>

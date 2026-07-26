@@ -35,7 +35,7 @@ const DELAYS = [0, 1, 2, 3] as const;
 
 export default function ContactPage() {
   return (
-    <div className="page page-fade">
+    <div className="page">
       <div className="page-banner">
         <div className="wrap">
           <Reveal as="span" className="eyebrow">
