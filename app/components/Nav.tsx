@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createClient } from "../../lib/supabase/client";
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -20,6 +21,7 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobOpen, setMobOpen] = useState(false);
   const [lastPathname, setLastPathname] = useState(pathname);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   if (pathname !== lastPathname) {
     setLastPathname(pathname);
@@ -31,6 +33,18 @@ export default function Nav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Checked client-side (rather than in the root layout) so the rest of the
+  // site — which doesn't need per-request auth — stays statically prerendered.
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return;
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => setIsLoggedIn(!!user));
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => setIsLoggedIn(!!session?.user));
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
@@ -47,10 +61,23 @@ export default function Nav() {
               </Link>
             </li>
           ))}
+          {!isLoggedIn && (
+            <li>
+              <Link href="/login" className={pathname === "/login" ? "active" : ""}>
+                Login
+              </Link>
+            </li>
+          )}
           <li>
-            <Link href="/membership" className="nav-cta">
-              Join Now
-            </Link>
+            {isLoggedIn ? (
+              <Link href="/account" className="nav-cta">
+                My Account
+              </Link>
+            ) : (
+              <Link href="/membership" className="nav-cta">
+                Join Now
+              </Link>
+            )}
           </li>
         </ul>
         <div
@@ -68,6 +95,9 @@ export default function Nav() {
             {l.label}
           </Link>
         ))}
+        <Link href={isLoggedIn ? "/account" : "/login"} onClick={() => setMobOpen(false)}>
+          {isLoggedIn ? "My Account" : "Login"}
+        </Link>
       </div>
     </>
   );

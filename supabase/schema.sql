@@ -126,6 +126,20 @@ create policy "member photos: admin read all"
     and is_admin()
   );
 
+-- ─── Atomic member ID generation ───
+-- A sequence + wrapper function so two simultaneous approvals can never
+-- collide on the same member_id.
+create sequence if not exists member_id_seq start 1;
+
+create or replace function next_member_id()
+returns text
+language sql
+security definer
+set search_path = public
+as $$
+  select 'JSEC-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('member_id_seq')::text, 5, '0');
+$$;
+
 -- ─── First admin ───
 -- After you sign up through the site once, run this (with your own email)
 -- to make yourself the first admin. Every admin after that can be managed

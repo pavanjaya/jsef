@@ -1,0 +1,197 @@
+"use client";
+
+import { useMemo, useState, useTransition } from "react";
+import { approveMember, rejectMember } from "./actions";
+
+type Member = {
+  id: string;
+  role: string;
+  status: string;
+  member_id: string | null;
+  full_name: string;
+  fathers_or_husbands_name: string;
+  dob: string | null;
+  gotra: string | null;
+  phone: string;
+  email: string;
+  occupation: string | null;
+  native_village: string | null;
+  aadhaar_number: string;
+  address_line: string;
+  city: string;
+  state: string;
+  country: string;
+  pin_code: string | null;
+  applied_at: string;
+  approved_at: string | null;
+};
+
+const FILTERS = [
+  { key: "all", label: "All" },
+  { key: "pending", label: "Pending" },
+  { key: "approved", label: "Approved" },
+  { key: "rejected", label: "Rejected" },
+] as const;
+
+const STATUS_CLASS: Record<string, string> = {
+  pending: "status-pending",
+  approved: "status-approved",
+  rejected: "status-rejected",
+};
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
+export default function AdminClient({ members }: { members: Member[] }) {
+  const [filter, setFilter] = useState<string>("all");
+  const [selected, setSelected] = useState<Member | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  const filtered = useMemo(
+    () => (filter === "all" ? members : members.filter((m) => m.status === filter)),
+    [members, filter]
+  );
+
+  const runAction = (action: (id: string) => Promise<{ error: string | null }>, id: string) => {
+    setError(null);
+    startTransition(async () => {
+      const result = await action(id);
+      if (result.error) setError(result.error);
+      else setSelected(null);
+    });
+  };
+
+  return (
+    <>
+      <div className="dir-filters" style={{ marginTop: 0 }}>
+        {FILTERS.map((f) => (
+          <button
+            key={f.key}
+            className={`dir-filter-btn${filter === f.key ? " active" : ""}`}
+            onClick={() => setFilter(f.key)}
+          >
+            {f.label} ({f.key === "all" ? members.length : members.filter((m) => m.status === f.key).length})
+          </button>
+        ))}
+      </div>
+
+      <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: ".8rem" }}>
+        {filtered.length === 0 && <p style={{ color: "var(--ink-3)", fontSize: 14 }}>No applications here.</p>}
+        {filtered.map((m) => (
+          <button
+            key={m.id}
+            onClick={() => setSelected(m)}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: "1rem",
+              textAlign: "left",
+              width: "100%",
+              background: "var(--bg)",
+              border: "1px solid var(--rule)",
+              padding: "1rem 1.4rem",
+              cursor: "pointer",
+              font: "inherit",
+              color: "inherit",
+            }}
+          >
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15 }}>{m.full_name}</div>
+              <div style={{ fontSize: 12.5, color: "var(--ink-3)" }}>
+                {m.email} · Applied {formatDate(m.applied_at)}
+              </div>
+            </div>
+            <span className={`status-badge ${STATUS_CLASS[m.status]}`}>{m.status}</span>
+          </button>
+        ))}
+      </div>
+
+      {selected && (
+        <div
+          className="modal-overlay open"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelected(null);
+          }}
+        >
+          <div className="modal-box">
+            <button type="button" className="modal-close" onClick={() => setSelected(null)} aria-label="Close">
+              &#x2715;
+            </button>
+
+            <h3 style={{ marginBottom: ".3rem", fontSize: 22 }}>{selected.full_name}</h3>
+            <span className={`status-badge ${STATUS_CLASS[selected.status]}`} style={{ marginBottom: "1.5rem", display: "inline-block" }}>
+              {selected.status}
+            </span>
+
+            <div className="fg-section-title" style={{ marginTop: 0 }}>Personal Details</div>
+            <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>
+              Father&apos;s / Husband&apos;s Name: {selected.fathers_or_husbands_name}
+              <br />
+              Date of Birth: {selected.dob || "—"}
+              <br />
+              Gotra: {selected.gotra || "—"}
+              <br />
+              Occupation: {selected.occupation || "—"}
+              <br />
+              Native Village: {selected.native_village || "—"}
+            </p>
+
+            <div className="fg-section-title">Contact</div>
+            <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>
+              Phone: {selected.phone}
+              <br />
+              Email: {selected.email}
+            </p>
+
+            <div className="fg-section-title">Identity</div>
+            <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>Aadhaar: {selected.aadhaar_number}</p>
+
+            <div className="fg-section-title">Address</div>
+            <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>
+              {selected.address_line}, {selected.city}, {selected.state} {selected.pin_code || ""}, {selected.country}
+            </p>
+
+            {selected.member_id && (
+              <>
+                <div className="fg-section-title">Membership</div>
+                <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>
+                  Member ID: {selected.member_id}
+                  <br />
+                  Approved: {selected.approved_at ? formatDate(selected.approved_at) : "—"}
+                </p>
+              </>
+            )}
+
+            {error && <p style={{ fontSize: 13, color: "#B91C1C", margin: "1rem 0" }}>{error}</p>}
+
+            {selected.status === "pending" && (
+              <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
+                <button
+                  type="button"
+                  className="btn btn-brand"
+                  disabled={pending}
+                  style={{ flex: 1, justifyContent: "center", opacity: pending ? 0.6 : 1 }}
+                  onClick={() => runAction(approveMember, selected.id)}
+                >
+                  Approve
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  disabled={pending}
+                  style={{ flex: 1, justifyContent: "center", opacity: pending ? 0.6 : 1 }}
+                  onClick={() => runAction(rejectMember, selected.id)}
+                >
+                  Reject
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
