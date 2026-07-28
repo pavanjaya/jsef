@@ -51,6 +51,9 @@ export default function Nav() {
 
   return (
     <>
+      <div className="ann-bar">
+        <Link href="/membership">Lifetime Membership · ₹1,100 · Applications Open →</Link>
+      </div>
       <nav id="topnav" className={scrolled ? "scrolled" : ""}>
         <Link href="/" className="nav-logo">
           <img src="/images/logo-wordmark.svg" style={{ height: 39, width: "auto" }} alt="JSEF" />

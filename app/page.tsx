@@ -36,6 +36,15 @@ const PILLARS = [
   },
 ] as const;
 
+const MOMENTS = [
+  { img: "/images/jpl-2026-champions.png", label: "JPL 2026 · Champions" },
+  { img: "/images/gallery-box-cricket-league.png", label: "Box Cricket League" },
+  { img: "/images/gallery-bcl-team-photo.png", label: "BCL · Team Photo" },
+  { img: "/images/gallery-bcl-ladies-match.png", label: "BCL · Ladies Match" },
+  { img: "/images/gallery-bcl-winners.png", label: "BCL · Winners" },
+  { img: "/images/gallery-bcl-inauguration.png", label: "BCL · Inauguration" },
+] as const;
+
 const EVENTS = [
   { emoji: "🏏", cls: "cricket", tag: "Sports", title: "Annual Cricket Tournament", meta: "Mar 15–17, 2026 · Community Sports Ground" },
   { emoji: "💻", cls: "edu", tag: "Education", title: "Digital Skills Workshop", meta: "Mar 22, 2026 · Community Hall" },
@@ -50,6 +59,7 @@ export default function HomePage() {
       <HeroCarousel />
 
       <div id="h-stats">
+        <span className="stats-tag">सेवा · संस्कृति · समाज</span>
         <div className="stats-row">
           <Reveal className="stat-item" delay={1}>
             <Counter target={7} suffix="+" />
@@ -73,7 +83,7 @@ export default function HomePage() {
       <section id="h-mission">
         <div className="mis-wrap">
           <Reveal from="left">
-            <span className="eyebrow">Our Mission</span>
+            <span className="eyebrow eyebrow-pill">Our Mission</span>
             <h2 className="h2" style={{ marginBottom: "1.6rem" }}>
               A community
               <br />
@@ -106,7 +116,7 @@ export default function HomePage() {
         <div className="wrap">
           <Reveal className="pillars-head">
             <div>
-              <span className="eyebrow">Our Objectives</span>
+              <span className="eyebrow eyebrow-pill">Our Objectives</span>
               <h2 className="h2">
                 Six pillars.
                 <br />
@@ -120,6 +130,7 @@ export default function HomePage() {
           <div className="pillars-grid">
             {PILLARS.map((p, i) => (
               <Reveal className="pillar-item" delay={DELAYS[i % 3]} key={p.title}>
+                <span className="pillar-n">{String(i + 1).padStart(2, "0")}</span>
                 <div className="pillar-ico">
                   <svg viewBox="0 0 24 24">
                     {p.icon.split("|").map((d, j) => (
@@ -135,13 +146,36 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="h-moments">
+        <div className="wrap">
+          <Reveal>
+            <span className="eyebrow eyebrow-pill" style={{ background: "rgba(255,255,255,.08)", color: "var(--accent-orange)" }}>
+              Community in Motion
+            </span>
+            <h2 className="h2" style={{ color: "#fff", marginBottom: "2.5rem" }}>
+              Moments worth
+              <br />
+              <em style={{ color: "rgba(255,255,255,.7)" }}>remembering.</em>
+            </h2>
+          </Reveal>
+        </div>
+        <div className="moments-strip">
+          {MOMENTS.map((m) => (
+            <div className="moments-card" style={{ backgroundImage: `url('${m.img}')` }} key={m.img}>
+              <div className="moments-card-overlay"></div>
+              <span className="moments-badge">{m.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="rule-line"></div>
 
       <section id="h-events">
         <div className="wrap">
           <Reveal className="events-head">
             <div>
-              <span className="eyebrow">What&apos;s Next</span>
+              <span className="eyebrow eyebrow-pill">What&apos;s Next</span>
               <h2 className="h2">
                 Upcoming
                 <br />
@@ -168,7 +202,7 @@ export default function HomePage() {
       <section id="h-join">
         <div className="wrap">
           <Reveal className="join-intro">
-            <span className="eyebrow">Get Involved</span>
+            <span className="eyebrow eyebrow-pill">Get Involved</span>
             <h2 className="h2">
               Be part of
               <br />

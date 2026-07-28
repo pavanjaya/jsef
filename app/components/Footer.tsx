@@ -32,7 +32,7 @@ export default function Footer() {
             <ul className="foot-links">
               <li><Link href="/committee">Governing Body</Link></li>
               <li><Link href="/directory">Business Directory</Link></li>
-              <li><Link href="/membership">Member Login</Link></li>
+              <li><Link href="/login">Member Login</Link></li>
               <li><Link href="/contact">Partner With Us</Link></li>
             </ul>
           </div>

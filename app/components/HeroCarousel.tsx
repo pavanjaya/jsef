@@ -128,6 +128,11 @@ export default function HeroCarousel() {
         ))}
       </div>
 
+      <div className="hero-badge">
+        <strong>1,200+</strong>
+        <span>Members · Since 2018</span>
+      </div>
+
       <div className="scroll-hint">
         <div className="scroll-mouse"></div>
         <span>Scroll</span>
