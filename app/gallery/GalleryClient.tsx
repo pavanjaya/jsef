@@ -77,17 +77,19 @@ export default function GalleryClient() {
         {GRID_ITEMS.map((item, i) => (
           <Reveal
             as="div"
-            className={`gal-item${item.wide ? " gal-wide" : ""}`}
+            className={`gal-card${item.wide ? " gal-wide" : ""}`}
             delay={i === 0 ? undefined : DELAYS[i - 1]}
             key={EVENTS[i].title}
-            style={{ background: item.bg, fontSize: item.wide ? 0 : 36 }}
-            onClick={() => open(i)}
           >
-            {!item.wide && item.emoji}
-            <div className="gal-caption">
-              <div className="gal-caption-title">{EVENTS[i].title}</div>
-              <div className="gal-caption-date">{EVENTS[i].date}</div>
+            <div
+              className="gal-item"
+              style={{ background: item.bg, fontSize: item.wide ? 0 : 36 }}
+              onClick={() => open(i)}
+            >
+              {!item.wide && item.emoji}
             </div>
+            <div className="gal-card-title">{EVENTS[i].title}</div>
+            <div className="gal-card-meta">{EVENTS[i].date}</div>
           </Reveal>
         ))}
       </div>
