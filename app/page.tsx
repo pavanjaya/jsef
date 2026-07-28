@@ -268,24 +268,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section style={{ background: "var(--deep)", padding: "5rem 0" }}>
+      <section style={{ background: "var(--warm)", padding: "8rem 0" }}>
         <div className="wrap" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
           <Reveal>
-            <span className="eyebrow eyebrow-pill" style={{ background: "rgba(255,255,255,.08)", color: "var(--brand)" }}>
-              JangidTimes
-            </span>
-            <h2 className="h2" style={{ color: "#fff", marginBottom: ".6rem" }}>
+            <span className="eyebrow eyebrow-pill">JangidTimes</span>
+            <h2 className="h2" style={{ marginBottom: ".6rem" }}>
               Champions, scholars
               <br />
-              <em style={{ color: "rgba(255,255,255,.7)" }}>& new beginnings.</em>
+              <em>& new beginnings.</em>
             </h2>
-            <p style={{ fontFamily: "var(--f-serif)", fontSize: 14, color: "rgba(255,255,255,.55)", maxWidth: 420 }}>
+            <p style={{ fontFamily: "var(--f-serif)", fontSize: 14, color: "var(--ink-2)", maxWidth: 420 }}>
               The latest issue features the JBCL 2025 champions, scholarship winners, and an exclusive interview
               with the Governing Body.
             </p>
           </Reveal>
           <Reveal delay={1}>
-            <Link href="/magazine" className="btn btn-white">
+            <Link href="/magazine" className="btn btn-ink">
               Read JangidTimes →
             </Link>
           </Reveal>
