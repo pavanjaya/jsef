@@ -1,14 +1,25 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Serif } from "next/font/google";
+import { Bowlby_One, Oswald, Inter } from "next/font/google";
 import "./globals.css";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 
-const plexSerif = IBM_Plex_Serif({
-  variable: "--font-plex-serif",
+const bowlbyOne = Bowlby_One({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const oswald = Oswald({
+  variable: "--font-label",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
+const inter = Inter({
+  variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -23,10 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={plexSerif.variable}>
-      <head>
-        <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" />
-      </head>
+    <html lang="en" className={`${bowlbyOne.variable} ${oswald.variable} ${inter.variable}`}>
       <body>
         <Nav />
         {children}
