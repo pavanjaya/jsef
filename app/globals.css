@@ -633,10 +633,10 @@ p,blockquote,
 .cnt-val a:hover{color:var(--brand)}
 
 /* ─── FOOTER ─── */
-footer{background:var(--deep);padding:5.5rem 0 2.5rem}
+footer{background:var(--warm);padding:5.5rem 0 2.5rem;border-top:1px solid var(--rule)}
 .foot-wrap{padding:0 3rem}
 .foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;margin-bottom:4.5rem}
-.foot-brand-desc{font-size:13.5px;color:rgba(255,255,255,.55);line-height:1.85;margin-top:1.2rem;max-width:280px}
+.foot-brand-desc{font-size:13.5px;color:var(--ink-2);line-height:1.85;margin-top:1.2rem;max-width:280px}
 .foot-tagline{
   font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--accent-orange);text-transform:uppercase;
   margin-top:1.4rem;display:inline-flex;align-items:center;gap:6px;
@@ -645,10 +645,10 @@ footer{background:var(--deep);padding:5.5rem 0 2.5rem}
 .foot-tagline::before{content:'✦';font-size:9px}
 .foot-subscribe{display:flex;gap:.5rem;margin-top:1.6rem;max-width:320px}
 .foot-subscribe input{
-  flex:1;min-width:0;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);
-  color:#fff;font-family:var(--f);font-size:13px;padding:10px 14px;outline:none;
+  flex:1;min-width:0;background:var(--surface);border:1.5px solid var(--rule);
+  color:var(--ink);font-family:var(--f);font-size:13px;padding:10px 14px;outline:none;
 }
-.foot-subscribe input::placeholder{color:rgba(255,255,255,.4)}
+.foot-subscribe input::placeholder{color:var(--ink-3)}
 .foot-subscribe input:focus{border-color:var(--accent-orange)}
 .foot-subscribe button{
   background:var(--accent-orange);color:#fff;border:none;
@@ -658,21 +658,21 @@ footer{background:var(--deep);padding:5.5rem 0 2.5rem}
 .foot-subscribe button:hover{background:var(--accent-orange-dark)}
 .foot-col-title{
   font-size:10.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--brand);
-  margin-bottom:1.2rem;padding-bottom:.9rem;border-bottom:1px solid rgba(255,255,255,.15);
+  margin-bottom:1.2rem;padding-bottom:.9rem;border-bottom:1px solid var(--rule);
 }
 .foot-links{list-style:none;display:flex;flex-direction:column;gap:.9rem}
 .foot-links a{
-  font-size:13.5px;color:rgba(255,255,255,.7);text-decoration:none;cursor:pointer;
+  font-size:13.5px;color:var(--ink-2);text-decoration:none;cursor:pointer;
   display:inline-flex;align-items:center;gap:9px;
 }
 .foot-links a svg{width:14px;height:14px;flex-shrink:0;opacity:.6}
-.foot-links a:hover{color:#fff}
+.foot-links a:hover{color:var(--ink)}
 .foot-links a:hover svg{opacity:1}
-.foot-bot{border-top:1px solid rgba(255,255,255,.12);padding-top:1.8rem;display:flex;justify-content:space-between;align-items:center}
-.foot-copy{font-size:12px;color:rgba(255,255,255,.35)}
+.foot-bot{border-top:1px solid var(--rule);padding-top:1.8rem;display:flex;justify-content:space-between;align-items:center}
+.foot-copy{font-size:12px;color:var(--ink-3)}
 .foot-legal{display:flex;gap:1.5rem}
-.foot-legal a{font-size:12px;color:rgba(255,255,255,.35);text-decoration:none;}
-.foot-legal a:hover{color:rgba(255,255,255,.7)}
+.foot-legal a{font-size:12px;color:var(--ink-3);text-decoration:none;}
+.foot-legal a:hover{color:var(--ink)}
 
 /* ─── RESPONSIVE ─── */
 @media(max-width:960px){

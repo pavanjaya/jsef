@@ -18,11 +18,7 @@ export default function Footer() {
       <div className="foot-wrap">
         <div className="foot-top">
           <div>
-            <img
-              src="/images/logo-wordmark.svg"
-              style={{ height: 30, width: "auto", filter: "brightness(0) invert(1)" }}
-              alt="JSEF"
-            />
+            <img src="/images/logo-wordmark.svg" style={{ height: 30, width: "auto" }} alt="JSEF" />
             <p className="foot-brand-desc">
               Jangid Sports & Education Committee — empowering our community in Nashik through sports, learning,
               culture, and shared purpose since 2018.
