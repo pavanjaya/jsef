@@ -268,24 +268,52 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section style={{ background: "var(--warm)", padding: "8rem 0" }}>
-        <div className="wrap" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
-          <Reveal>
-            <span className="eyebrow eyebrow-pill">JangidTimes</span>
-            <h2 className="h2" style={{ marginBottom: ".6rem" }}>
-              Champions, scholars
+      <section style={{ background: "var(--warm)", padding: "9rem 0" }}>
+        <div className="wrap mis-wrap">
+          <Reveal from="left">
+            <span className="eyebrow eyebrow-pill">Our Publication</span>
+            <h2 className="h2" style={{ marginBottom: "1.4rem" }}>
+              JangidTimes.
               <br />
-              <em>& new beginnings.</em>
+              <em>Our own magazine.</em>
             </h2>
-            <p style={{ fontFamily: "var(--f-serif)", fontSize: 14, color: "var(--ink-2)", maxWidth: 420 }}>
-              The latest issue features the JBCL 2025 champions, scholarship winners, and an exclusive interview
-              with the Governing Body.
+            <p className="lead" style={{ maxWidth: 460, marginBottom: "1.8rem" }}>
+              A quarterly magazine covering JSEC&apos;s biggest stories — champions, scholars, festivals, and the
+              people behind them. The latest issue features the JBCL 2025 champions, scholarship winners, and an
+              exclusive interview with the Governing Body.
             </p>
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              <Link href="/magazine" className="btn btn-ink">
+                Read Latest Issue →
+              </Link>
+              <Link href="/magazine#archive" className="btn btn-ghost">
+                View Archive
+              </Link>
+            </div>
           </Reveal>
-          <Reveal delay={1}>
-            <Link href="/magazine" className="btn btn-ink">
-              Read JangidTimes →
-            </Link>
+          <Reveal from="right" delay={2}>
+            <div
+              style={{
+                aspectRatio: "4/5",
+                background: "linear-gradient(140deg,var(--deep),#3A2F14)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "1rem",
+                color: "#fff",
+                maxWidth: 340,
+                margin: "0 auto",
+              }}
+            >
+              <span style={{ fontSize: 64 }}>📰</span>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "var(--brand)" }}>
+                Latest · March 2025
+              </span>
+              <span style={{ fontSize: 20, fontFamily: "var(--f-display)", textAlign: "center", padding: "0 1.5rem" }}>
+                Champions, Scholars &amp; New Beginnings
+              </span>
+            </div>
           </Reveal>
         </div>
       </section>

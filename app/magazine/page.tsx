@@ -72,7 +72,7 @@ export default function MagazinePage() {
 
       <div className="rule-line"></div>
 
-      <section className="sec" style={{ background: "var(--warm)" }}>
+      <section id="archive" className="sec" style={{ background: "var(--warm)", scrollMarginTop: 116 }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow">
             Past Issues
