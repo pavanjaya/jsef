@@ -593,7 +593,7 @@ p,blockquote,
 }
 
 /* ─── GALLERY ─── */
-.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.gal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
 .gal-item{
   aspect-ratio:1;border-radius:8px;overflow:hidden;
   display:flex;align-items:center;justify-content:center;font-size:36px;
@@ -710,7 +710,7 @@ footer{background:var(--deep);padding:5.5rem 0 2.5rem}
   .sec{padding:5rem 0}
   .form-row{grid-template-columns:1fr}
   .mag-grid{grid-template-columns:1fr}
-  .gal-grid{grid-template-columns:1fr 1fr}
+  .gal-grid{grid-template-columns:1fr;gap:1rem}
   .gal-wide{grid-column:span 1;aspect-ratio:1}
 }
 
