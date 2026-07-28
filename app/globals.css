@@ -39,12 +39,12 @@ nav.scrolled{background:var(--bg);backdrop-filter:none;border-color:var(--rule)}
 .nav-logo{display:flex;align-items:center;}
 .nav-logo:hover{opacity:.7}
 .nav-links{list-style:none;display:flex;align-items:center;gap:2rem}
-.nav-links a{font-size:13px;font-weight:500;color:var(--ink-2);text-decoration:none;letter-spacing:.2px;cursor:pointer;position:relative;padding-bottom:2px}
+.nav-links a{font-size:13px;font-weight:600;color:var(--ink-2);text-decoration:none;text-transform:uppercase;letter-spacing:.6px;cursor:pointer;position:relative;padding-bottom:2px}
 .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--brand);}
 .nav-links a:hover::after,.nav-links a.active::after{width:100%}
 .nav-links a:hover,.nav-links a.active{color:var(--ink)}
-.nav-cta{background:var(--accent-orange);color:#fff !important;padding:13px 24px !important;border-radius:4px;font-weight:600 !important;font-size:12px !important;line-height:1;letter-spacing:.8px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center}
-.nav-cta:hover{background:var(--accent-orange-dark) !important}
+.nav-cta{background:var(--ink);color:var(--bg) !important;padding:13px 24px !important;border-radius:4px;font-weight:600 !important;font-size:12px !important;line-height:1;letter-spacing:.8px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center}
+.nav-cta:hover{background:var(--brand) !important;color:#fff !important}
 .ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
 .ham span{width:22px;height:1.5px;background:var(--ink);border-radius:2px;}
 .ham.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
