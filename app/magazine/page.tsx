@@ -12,6 +12,14 @@ const SIDEBAR = [
   { tag: "Community · Nov 2024", title: "Our Members Share Their Stories" },
 ] as const;
 
+const ARCHIVE = [
+  { issue: "Issue 03", date: "December 2024", title: "Heritage Festival Special" },
+  { issue: "Issue 02", date: "August 2024", title: "The Scholarship Issue" },
+  { issue: "Issue 01", date: "April 2024", title: "Launch Edition" },
+] as const;
+
+const ARCHIVE_DELAYS = [1, 2, 3] as const;
+
 export default function MagazinePage() {
   return (
     <div className="page">
@@ -58,6 +66,40 @@ export default function MagazinePage() {
                 </div>
               ))}
             </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <div className="rule-line"></div>
+
+      <section className="sec" style={{ background: "var(--warm)" }}>
+        <div className="wrap">
+          <Reveal as="span" className="eyebrow">
+            Past Issues
+          </Reveal>
+          <Reveal as="h2" className="h2" delay={1} style={{ marginBottom: "1rem" }}>
+            The archive.
+          </Reveal>
+          <Reveal as="p" delay={2} style={{ fontSize: 14, color: "var(--ink-3)", marginBottom: "2.5rem", maxWidth: 480 }}>
+            Don&apos;t have a copy of an older issue? Request it and we&apos;ll send it over by email.
+          </Reveal>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1.2rem" }}>
+            {ARCHIVE.map((a, i) => (
+              <Reveal className="mag-item" delay={ARCHIVE_DELAYS[i]} key={a.issue} style={{ cursor: "default" }}>
+                <span className="mag-item-tag">
+                  {a.issue} · {a.date}
+                </span>
+                <div className="mag-item-title" style={{ marginBottom: "1rem" }}>
+                  {a.title}
+                </div>
+                <a
+                  href={`mailto:hello@jsec.org?subject=${encodeURIComponent(`Request: JangidTimes ${a.issue}`)}`}
+                  style={{ fontSize: 12, fontWeight: 700, color: "var(--brand)", textDecoration: "none" }}
+                >
+                  Request this issue →
+                </a>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>

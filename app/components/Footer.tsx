@@ -48,6 +48,7 @@ export default function Footer() {
               <li><Link href="/gallery">Gallery</Link></li>
               <li><Link href="/membership">Membership</Link></li>
               <li><Link href="/magazine">JangidTimes</Link></li>
+              <li><Link href="/scholarships">Scholarships</Link></li>
             </ul>
           </div>
           <div>
@@ -57,6 +58,7 @@ export default function Footer() {
               <li><Link href="/directory">Business Directory</Link></li>
               <li><Link href="/login">Member Login</Link></li>
               <li><Link href="/contact">Partner With Us</Link></li>
+              <li><Link href="/in-memoriam">In Memoriam</Link></li>
             </ul>
           </div>
           <div>

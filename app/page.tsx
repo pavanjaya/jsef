@@ -45,6 +45,12 @@ const MOMENTS = [
   { img: "/images/gallery-bcl-inauguration.png", label: "BCL · Inauguration" },
 ] as const;
 
+const TESTIMONIALS = [
+  { quote: "JSEC gave my son a scholarship when we needed it most — and a community that showed up for us.", cite: "Member since 2016" },
+  { quote: "I found my first business clients through the directory. It's more than a listing — it's real support.", cite: "Member since 2021" },
+  { quote: "From cricket tournaments to cultural nights, there's always a reason to show up and reconnect.", cite: "Member since 2019" },
+] as const;
+
 const EVENTS = [
   { emoji: "🏏", cls: "cricket", tag: "Sports", title: "Annual Cricket Tournament", meta: "Mar 15–17, 2026 · Community Sports Ground" },
   { emoji: "💻", cls: "edu", tag: "Education", title: "Digital Skills Workshop", meta: "Mar 22, 2026 · Community Hall" },
@@ -146,6 +152,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      <Link
+        href="/scholarships"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "1rem",
+          flexWrap: "wrap",
+          textAlign: "center",
+          background: "var(--ink)",
+          color: "#fff",
+          padding: "1.4rem 2rem",
+          textDecoration: "none",
+        }}
+      >
+        <span style={{ fontSize: 14, color: "rgba(255,255,255,.8)" }}>
+          ₹15L+ awarded in scholarships to date — education shouldn&apos;t wait on circumstance.
+        </span>
+        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".5px", textTransform: "uppercase", color: "var(--brand)" }}>
+          See scholarships →
+        </span>
+      </Link>
+
       <section id="h-moments">
         <div className="wrap">
           <Reveal>
@@ -173,6 +202,44 @@ export default function HomePage() {
 
       <div className="rule-line"></div>
 
+      <section style={{ background: "var(--warm)", padding: "6rem 0" }}>
+        <div className="wrap">
+          <Reveal style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <span className="eyebrow eyebrow-pill">In Their Words</span>
+            <h2 className="h2">
+              What our
+              <br />
+              <em>members say.</em>
+            </h2>
+          </Reveal>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1.5rem" }}>
+            {TESTIMONIALS.map((t, i) => (
+              <Reveal
+                key={t.cite}
+                delay={DELAYS[i]}
+                style={{ background: "var(--surface)", border: "1px solid var(--rule)", padding: "2rem" }}
+              >
+                <p
+                  style={{
+                    fontFamily: "var(--f-serif)",
+                    fontSize: 14,
+                    color: "var(--ink-2)",
+                    lineHeight: 1.8,
+                    marginBottom: "1.2rem",
+                    fontStyle: "italic",
+                  }}
+                >
+                  &quot;{t.quote}&quot;
+                </p>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "var(--ink-3)" }}>
+                  — {t.cite}
+                </span>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="h-events">
         <div className="wrap">
           <Reveal className="events-head">
@@ -198,6 +265,30 @@ export default function HomePage() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section style={{ background: "var(--deep)", padding: "5rem 0" }}>
+        <div className="wrap" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
+          <Reveal>
+            <span className="eyebrow eyebrow-pill" style={{ background: "rgba(255,255,255,.08)", color: "var(--brand)" }}>
+              JangidTimes
+            </span>
+            <h2 className="h2" style={{ color: "#fff", marginBottom: ".6rem" }}>
+              Champions, scholars
+              <br />
+              <em style={{ color: "rgba(255,255,255,.7)" }}>& new beginnings.</em>
+            </h2>
+            <p style={{ fontFamily: "var(--f-serif)", fontSize: 14, color: "rgba(255,255,255,.55)", maxWidth: 420 }}>
+              The latest issue features the JBCL 2025 champions, scholarship winners, and an exclusive interview
+              with the Governing Body.
+            </p>
+          </Reveal>
+          <Reveal delay={1}>
+            <Link href="/magazine" className="btn btn-white">
+              Read JangidTimes →
+            </Link>
+          </Reveal>
         </div>
       </section>
 
