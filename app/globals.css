@@ -130,8 +130,8 @@ p,blockquote,
 .hero-badge strong{display:block;font-family:var(--f-display);font-size:22px;font-weight:400;letter-spacing:0;color:var(--brand)}
 .hero-badge span{display:block;font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-3);margin-top:1px}
 .slide-title{
-  font-size:clamp(36px,6vw,68px);font-weight:800;
-  color:#fff;line-height:1.03;letter-spacing:-2px;
+  font-family:var(--f-display);font-size:clamp(36px,6vw,68px);font-weight:400;
+  color:#fff;line-height:1.05;letter-spacing:-1px;
   margin-bottom:.9rem;max-width:680px;
 }
 .slide-desc{
