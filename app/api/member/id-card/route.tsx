@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 import { Document, Page, View, Text, Image, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
 import { getApprovedMember } from "../../../../lib/approvedMember";
 
-const NAVY = "#3D0B3D";
-const ORANGE = "#FF6A00";
-const CREAM = "#FFFEFA";
+const INK = "#171310";
+const GOLD = "#C9A227";
+const CREAM = "#FFFCF2";
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: NAVY,
+    backgroundColor: INK,
     padding: 18,
     fontFamily: "Helvetica",
   },
@@ -26,11 +26,11 @@ const styles = StyleSheet.create({
   brand: {
     fontSize: 16,
     fontFamily: "Helvetica-Bold",
-    color: NAVY,
+    color: INK,
   },
   tagline: {
     fontSize: 6,
-    color: NAVY,
+    color: INK,
     opacity: 0.6,
     marginTop: 2,
     maxWidth: 140,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     fontSize: 7,
     fontFamily: "Helvetica-Bold",
     color: "#fff",
-    backgroundColor: ORANGE,
+    backgroundColor: GOLD,
     paddingVertical: 3,
     paddingHorizontal: 7,
   },
@@ -63,11 +63,11 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 15,
     fontFamily: "Helvetica-Bold",
-    color: NAVY,
+    color: INK,
   },
   meta: {
     fontSize: 8,
-    color: NAVY,
+    color: INK,
     opacity: 0.65,
     marginTop: 3,
   },
@@ -76,17 +76,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-end",
     borderTopWidth: 1,
-    borderTopColor: "#E8DEE6",
+    borderTopColor: "#E8E1D3",
     paddingTop: 10,
   },
   memberId: {
     fontSize: 10,
     fontFamily: "Helvetica-Bold",
-    color: ORANGE,
+    color: GOLD,
   },
   since: {
     fontSize: 7,
-    color: NAVY,
+    color: INK,
     opacity: 0.55,
   },
 });

@@ -2,20 +2,20 @@ import { NextResponse } from "next/server";
 import { Document, Page, View, Text, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
 import { getApprovedMember } from "../../../../lib/approvedMember";
 
-const NAVY = "#3D0B3D";
-const ORANGE = "#FF6A00";
-const CREAM = "#FFFEFA";
+const INK = "#171310";
+const GOLD = "#C9A227";
+const CREAM = "#FFFCF2";
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: NAVY,
+    backgroundColor: INK,
     padding: 16,
     fontFamily: "Helvetica",
   },
   border: {
     flex: 1,
     borderWidth: 2,
-    borderColor: ORANGE,
+    borderColor: GOLD,
     padding: 10,
   },
   inner: {
@@ -28,12 +28,12 @@ const styles = StyleSheet.create({
   brand: {
     fontSize: 20,
     fontFamily: "Helvetica-Bold",
-    color: NAVY,
+    color: INK,
     letterSpacing: 2,
   },
   tagline: {
     fontSize: 9,
-    color: NAVY,
+    color: INK,
     opacity: 0.55,
     marginTop: 4,
     marginBottom: 28,
@@ -41,36 +41,36 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: "Helvetica-Bold",
-    color: NAVY,
+    color: INK,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 10,
-    color: ORANGE,
+    color: GOLD,
     letterSpacing: 3,
     marginBottom: 28,
     textTransform: "uppercase",
   },
   bodyText: {
     fontSize: 11,
-    color: NAVY,
+    color: INK,
     opacity: 0.75,
     marginBottom: 10,
   },
   name: {
     fontSize: 26,
     fontFamily: "Helvetica-Bold",
-    color: NAVY,
+    color: INK,
     marginBottom: 8,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#E8DEE6",
+    borderBottomColor: "#E8E1D3",
     minWidth: 320,
     textAlign: "center",
   },
   detailsText: {
     fontSize: 11,
-    color: NAVY,
+    color: INK,
     opacity: 0.75,
     textAlign: "center",
     lineHeight: 1.6,
@@ -89,13 +89,13 @@ const styles = StyleSheet.create({
   },
   signatureLine: {
     borderTopWidth: 1,
-    borderTopColor: NAVY,
+    borderTopColor: INK,
     width: "100%",
     marginBottom: 4,
   },
   footerLabel: {
     fontSize: 8,
-    color: NAVY,
+    color: INK,
     opacity: 0.6,
     letterSpacing: 1,
     textTransform: "uppercase",
