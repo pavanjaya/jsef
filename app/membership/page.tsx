@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Reveal from "../components/Reveal";
+import FAQAccordion from "../components/FAQAccordion";
 import MembershipApplication from "./MembershipApplication";
 
 export const metadata: Metadata = {
@@ -68,6 +69,29 @@ const STEPS = [
   { n: "03", title: "Welcome Aboard", desc: "Once approved, you're a lifetime member — start enjoying every benefit right away." },
 ] as const;
 
+const FAQS = [
+  {
+    q: "How long does approval take?",
+    a: "Our governing body reviews every application within 5–7 business days. Log in anytime to check your status.",
+  },
+  {
+    q: "Is the ₹1,100 fee a one-time payment?",
+    a: "Yes — it's a single lifetime membership fee. No renewals, no recurring charges.",
+  },
+  {
+    q: "Do I need an Aadhaar card to apply?",
+    a: "Yes, we ask for your Aadhaar number for identity verification. It's kept strictly confidential and used only for membership records.",
+  },
+  {
+    q: "Can my whole family apply together?",
+    a: "Each family member applies individually with their own login and details, but families are welcome to submit multiple applications together.",
+  },
+  {
+    q: "What happens after I'm approved?",
+    a: "You can log in anytime to download your member ID card and membership certificate as PDFs, and you'll get full access to every JSEC benefit right away.",
+  },
+] as const;
+
 const ELIGIBILITY_DELAYS = [1, 2, 3, 4] as const;
 const BENEFIT_DELAYS = [1, 2, 1, 2, 3, 4] as const;
 const STEP_DELAYS = [1, 2, 3] as const;
@@ -102,13 +126,13 @@ export default function MembershipPage() {
             <br />
             <em>Jangid family.</em>
           </Reveal>
-          <div className="eligibility-grid">
+          <div className="elig-grid">
             {ELIGIBILITY.map((e, i) => (
-              <Reveal as="div" className="cnt-item" delay={ELIGIBILITY_DELAYS[i]} key={e.title} style={{ marginBottom: 0 }}>
-                <div className="cnt-icon">{e.icon}</div>
+              <Reveal as="div" className="elig-card" delay={ELIGIBILITY_DELAYS[i]} key={e.title}>
+                <span className="elig-check">✓</span>
                 <div>
-                  <div className="cnt-label">{e.title}</div>
-                  <div className="cnt-val">{e.desc}</div>
+                  <div className="elig-title">{e.title}</div>
+                  <div className="elig-desc">{e.desc}</div>
                 </div>
               </Reveal>
             ))}
@@ -147,6 +171,22 @@ export default function MembershipPage() {
       <div className="rule-line"></div>
 
       <section className="sec" style={{ background: "var(--surface)" }}>
+        <div className="wrap">
+          <Reveal as="span" className="eyebrow" style={{ textAlign: "center", display: "block" }}>
+            Questions
+          </Reveal>
+          <Reveal as="h2" className="h2" delay={1} style={{ textAlign: "center" }}>
+            Frequently
+            <br />
+            <em>asked.</em>
+          </Reveal>
+          <FAQAccordion items={FAQS} />
+        </div>
+      </section>
+
+      <div className="rule-line"></div>
+
+      <section className="sec" style={{ background: "var(--warm)" }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow" style={{ textAlign: "center", display: "block" }}>
             Join Today

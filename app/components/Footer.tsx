@@ -1,6 +1,18 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+
+  const onSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    const subject = encodeURIComponent("Newsletter signup");
+    const body = encodeURIComponent(`Please add ${email} to the JangidTimes mailing list.`);
+    window.location.href = `mailto:hello@jsec.org?subject=${subject}&body=${body}`;
+  };
+
   return (
     <footer>
       <div className="foot-wrap">
@@ -16,6 +28,17 @@ export default function Footer() {
               culture, and shared purpose since 2018.
             </p>
             <span className="foot-tagline">सेवा · संस्कृति · समाज</span>
+            <form className="foot-subscribe" onSubmit={onSubscribe}>
+              <input
+                type="email"
+                required
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-label="Email address"
+              />
+              <button type="submit">Subscribe →</button>
+            </form>
           </div>
           <div>
             <div className="foot-col-title">Explore</div>
