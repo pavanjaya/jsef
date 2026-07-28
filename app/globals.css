@@ -311,10 +311,10 @@ p,blockquote,
 
 /* ─── COMMITTEE ─── */
 /* ─── COMMITTEE CARDS (editorial) ─── */
-.committee-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);margin-top:3rem}
+.committee-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.8rem;margin-top:3rem}
 .comm-card{
   position:relative;overflow:hidden;cursor:default;
-  background:#fff;
+  background:#fff;border:1px solid var(--rule);
 }
 .comm-photo{
   width:100%;aspect-ratio:3/4;
