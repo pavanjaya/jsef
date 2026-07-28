@@ -63,7 +63,7 @@ const SLIDES: Slide[] = [
 ];
 
 const TOTAL = SLIDES.length;
-const INTERVAL_MS = 5000;
+const INTERVAL_MS = 3000;
 
 export default function HeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -133,10 +133,6 @@ export default function HeroCarousel() {
         <span>Members · Since 2018</span>
       </div>
 
-      <div className="scroll-hint">
-        <div className="scroll-mouse"></div>
-        <span>Scroll</span>
-      </div>
       <div className="slide-counter">{String(activeIndex + 1).padStart(2, "0")} / 0{TOTAL}</div>
       <div className="carousel-dots">
         {SLIDES.map((_, i) => (
