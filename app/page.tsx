@@ -1,7 +1,6 @@
 import Link from "next/link";
 import HeroCarousel from "./components/HeroCarousel";
 import Reveal from "./components/Reveal";
-import Counter from "./components/Counter";
 
 const PILLARS = [
   {
@@ -63,28 +62,6 @@ export default function HomePage() {
   return (
     <div className="page">
       <HeroCarousel />
-
-      <div id="h-stats">
-        <span className="stats-tag">सेवा · संस्कृति · समाज</span>
-        <div className="stats-row">
-          <Reveal className="stat-item" delay={1}>
-            <Counter target={7} suffix="+" />
-            <span className="stat-l">Years of service</span>
-          </Reveal>
-          <Reveal className="stat-item" delay={2}>
-            <Counter target={1200} suffix="+" />
-            <span className="stat-l">Active members</span>
-          </Reveal>
-          <Reveal className="stat-item" delay={3}>
-            <Counter target={48} />
-            <span className="stat-l">Events hosted</span>
-          </Reveal>
-          <Reveal className="stat-item" delay={4}>
-            <Counter target={15} suffix="L+" />
-            <span className="stat-l">Lakhs in scholarships</span>
-          </Reveal>
-        </div>
-      </div>
 
       <section id="h-mission">
         <div className="mis-wrap">
