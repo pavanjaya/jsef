@@ -295,7 +295,7 @@ p,blockquote,
 .join-card:hover .join-card-btn{background:var(--brand);color:#fff}
 
 /* ─── ABOUT PAGE ─── */
-.page-banner{padding:3rem 0 2.5rem;background:var(--bg);border-bottom:1px solid var(--rule)}
+.page-banner{padding:3rem 0 2.5rem;background:var(--bg)}
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
 .about-img{aspect-ratio:4/3;background:var(--warm);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:80px;overflow:hidden}
 .about-text p{font-size:16px;color:var(--ink-2);line-height:1.9;margin-bottom:1.2rem}
