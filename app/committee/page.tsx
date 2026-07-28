@@ -155,7 +155,7 @@ function MemberCard({ m, delay }: { m: Member; delay?: (typeof DELAYS)[number] }
 export default function CommitteePage() {
   return (
     <div className="page">
-      <div className="page-banner" style={{ background: "#fff", borderBottom: "1px solid var(--rule)" }}>
+      <div className="page-banner" style={{ background: "var(--bg)", borderBottom: "1px solid var(--rule)" }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow">
             Governing Body
@@ -171,7 +171,7 @@ export default function CommitteePage() {
         </div>
       </div>
 
-      <section className="sec" style={{ background: "#fff", paddingTop: "4rem", paddingBottom: "2rem" }}>
+      <section className="sec" style={{ background: "var(--bg)", paddingTop: "4rem", paddingBottom: "2rem" }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow">
             Executive Committee
@@ -187,7 +187,7 @@ export default function CommitteePage() {
         </div>
       </section>
 
-      <section className="sec" style={{ background: "#fff", paddingTop: "2rem", paddingBottom: "6rem" }}>
+      <section className="sec" style={{ background: "var(--bg)", paddingTop: "2rem", paddingBottom: "6rem" }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow">
             Committee Members
@@ -282,7 +282,7 @@ export default function CommitteePage() {
         </div>
       </div>
 
-      <section style={{ background: "#fff", padding: "5rem 0" }}>
+      <section style={{ background: "var(--bg)", padding: "5rem 0" }}>
         <div className="wrap">
           <Reveal as="h2" className="h2" style={{ textAlign: "center", marginBottom: ".8rem" }}>
             Contact the Committee

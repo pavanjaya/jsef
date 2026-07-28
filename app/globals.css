@@ -663,13 +663,18 @@ footer{background:var(--deep);padding:5.5rem 0 2.5rem}
   padding:0 16px;cursor:pointer;white-space:nowrap;
 }
 .foot-subscribe button:hover{background:var(--accent-orange-dark)}
-.foot-col-title{font-size:10.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#fff;margin-bottom:1.4rem}
-.foot-links{list-style:none;display:flex;flex-direction:column;gap:.7rem}
+.foot-col-title{
+  font-size:10.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--brand);
+  margin-bottom:1.2rem;padding-bottom:.9rem;border-bottom:1px solid rgba(255,255,255,.15);
+}
+.foot-links{list-style:none;display:flex;flex-direction:column;gap:.9rem}
 .foot-links a{
   font-size:13.5px;color:rgba(255,255,255,.7);text-decoration:none;cursor:pointer;
-  display:inline-block;
+  display:inline-flex;align-items:center;gap:9px;
 }
-.foot-links a:hover{color:#fff;transform:translateX(4px)}
+.foot-links a svg{width:14px;height:14px;flex-shrink:0;opacity:.6}
+.foot-links a:hover{color:#fff}
+.foot-links a:hover svg{opacity:1}
 .foot-bot{border-top:1px solid rgba(255,255,255,.12);padding-top:1.8rem;display:flex;justify-content:space-between;align-items:center}
 .foot-copy{font-size:12px;color:rgba(255,255,255,.35)}
 .foot-legal{display:flex;gap:1.5rem}
