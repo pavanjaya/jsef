@@ -104,9 +104,13 @@ p,blockquote,
 /* ════════════════════ HERO ════════════════════ */
 #h-hero{position:relative;height:100svh;min-height:600px;overflow:hidden;background:#0a0a0a;margin-top:0}
 .carousel-track{position:relative;height:100%}
-.carousel-slide{position:absolute;inset:0;height:100%;display:flex;align-items:center;overflow:hidden;opacity:0;pointer-events:none}
-.carousel-slide.active{opacity:1;pointer-events:auto}
-.slide-img{position:absolute;inset:0;background-size:cover;background-position:center}
+.carousel-slide{position:absolute;inset:0;height:100%;display:flex;align-items:center;overflow:hidden;opacity:0;pointer-events:none;transition:opacity 1.2s var(--ease-out-expo)}
+.carousel-slide.active{opacity:1;pointer-events:auto;z-index:1}
+.slide-img{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.08);transition:transform 6s linear}
+.carousel-slide.active .slide-img{transform:scale(1)}
+@media(prefers-reduced-motion:reduce){
+  .carousel-slide,.slide-img{transition:none}
+}
 .slide-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.78) 0%,rgba(0,0,0,.3) 45%,rgba(0,0,0,.1) 100%)}
 .slide-content{
   position:relative;z-index:2;
