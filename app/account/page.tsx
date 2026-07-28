@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
 import { signOut } from "./actions";
+import { upsertDonorProfile, removeDonorProfile } from "../blood-donors/actions";
+
+const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const;
 
 export const metadata: Metadata = {
   title: "My Account — JSEC",
@@ -37,6 +40,7 @@ const PREVIEW_MEMBER = {
 export default async function AccountPage() {
   let email = "you@example.com";
   let member: { full_name: string; status: string; member_id: string | null } = PREVIEW_MEMBER;
+  let donorProfile: { blood_group: string; city: string; available: boolean } | null = null;
 
   if (SUPABASE_CONFIGURED) {
     const supabase = await createClient();
@@ -49,6 +53,13 @@ export default async function AccountPage() {
 
     const { data } = await supabase.from("members").select("*").eq("id", user.id).single();
     member = data ?? { full_name: "", status: "pending", member_id: null };
+
+    const { data: donor } = await supabase
+      .from("blood_donors")
+      .select("blood_group, city, available")
+      .eq("member_id", user.id)
+      .maybeSingle();
+    donorProfile = donor;
   }
 
   const status = STATUS_COPY[member.status] ?? STATUS_COPY.pending;
@@ -114,6 +125,58 @@ export default async function AccountPage() {
           </div>
         </div>
       </section>
+
+      {SUPABASE_CONFIGURED && member.status === "approved" && (
+        <section className="sec" style={{ background: "var(--warm)" }}>
+          <div className="wrap">
+            <div className="mem-form" style={{ margin: "0 auto" }}>
+              <h3 style={{ marginBottom: ".4rem", fontSize: 18 }}>Blood Donor Registration</h3>
+              <p style={{ fontSize: 13, color: "var(--ink-3)", marginBottom: "1.5rem" }}>
+                Opt in to be listed on the{" "}
+                <a href="/blood-donors" style={{ color: "var(--brand)" }}>
+                  Blood Donors
+                </a>{" "}
+                directory. Only your blood group, city, and availability are shown — never your name or phone.
+              </p>
+              <form action={upsertDonorProfile}>
+                <div className="form-row">
+                  <div className="fg">
+                    <label htmlFor="blood_group">Blood Group *</label>
+                    <select id="blood_group" name="blood_group" defaultValue={donorProfile?.blood_group ?? ""} required>
+                      <option value="" disabled>
+                        Select…
+                      </option>
+                      {BLOOD_GROUPS.map((g) => (
+                        <option key={g} value={g}>
+                          {g}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="fg">
+                    <label htmlFor="city">City *</label>
+                    <input id="city" name="city" type="text" defaultValue={donorProfile?.city ?? ""} required />
+                  </div>
+                </div>
+                <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: 13.5, color: "var(--ink-2)", margin: "1rem 0 1.5rem" }}>
+                  <input type="checkbox" name="available" defaultChecked={donorProfile?.available ?? true} />
+                  Currently available to donate
+                </label>
+                <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                  <button type="submit" className="btn btn-brand" style={{ flex: 1, justifyContent: "center" }}>
+                    {donorProfile ? "Update Donor Profile" : "Join the Directory"}
+                  </button>
+                  {donorProfile && (
+                    <button type="submit" formAction={removeDonorProfile} className="btn btn-ghost" style={{ flex: 1, justifyContent: "center" }}>
+                      Remove My Profile
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

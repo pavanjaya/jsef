@@ -79,8 +79,32 @@ const PREVIEW_MEMBERS = [
   },
 ];
 
+const PREVIEW_JOB_POSTS = [
+  {
+    id: "preview-job-1",
+    title: "Warehouse Supervisor",
+    company: "Sample Business",
+    location: "Nashik",
+    description: "Oversee daily warehouse operations and a team of 4. 2+ years experience preferred.",
+    contact_email: "hiring@example.com",
+    status: "pending",
+    created_at: "2026-07-22T10:00:00Z",
+  },
+  {
+    id: "preview-job-2",
+    title: "Front Desk Executive",
+    company: "Laxmi Hardware",
+    location: "Nashik",
+    description: "Looking for a front desk executive with good communication skills.",
+    contact_email: "hiring2@example.com",
+    status: "approved",
+    created_at: "2026-07-10T10:00:00Z",
+  },
+];
+
 export default async function AdminPage() {
   let members = PREVIEW_MEMBERS;
+  let jobPosts = PREVIEW_JOB_POSTS;
 
   if (SUPABASE_CONFIGURED) {
     const supabase = await createClient();
@@ -95,6 +119,9 @@ export default async function AdminPage() {
 
     const { data } = await supabase.from("members").select("*").order("applied_at", { ascending: false });
     members = data ?? [];
+
+    const { data: jobs } = await supabase.from("job_posts").select("*").order("created_at", { ascending: false });
+    jobPosts = jobs ?? [];
   }
 
   return (
@@ -118,7 +145,7 @@ export default async function AdminPage() {
 
       <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
-          <AdminClient members={members} />
+          <AdminClient members={members} jobPosts={jobPosts} />
         </div>
       </section>
     </div>

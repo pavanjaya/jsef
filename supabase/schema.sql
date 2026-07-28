@@ -140,6 +140,94 @@ as $$
   select 'JSEC-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('member_id_seq')::text, 5, '0');
 $$;
 
+-- ═══════════════════════════════════════════════════════════════════
+-- Phase 2: Blood Donor Directory, Job Board, Event RSVP
+-- ═══════════════════════════════════════════════════════════════════
+
+-- ─── is_approved_member() helper ───
+-- Same shape as is_admin() — security definer so it can read `members`
+-- without recursing through RLS on `members` itself.
+create or replace function is_approved_member()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists(
+    select 1 from members where id = auth.uid() and status = 'approved'
+  );
+$$;
+
+-- ─── Blood Donor Directory ───
+
+create table if not exists blood_donors (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid not null unique references members(id) on delete cascade,
+  blood_group text not null check (blood_group in ('A+','A-','B+','B-','AB+','AB-','O+','O-')),
+  city text not null,
+  available boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table blood_donors enable row level security;
+
+create policy "donor: owner manage" on blood_donors
+  for all using (auth.uid() = member_id) with check (auth.uid() = member_id);
+
+create policy "donor: approved members read all" on blood_donors
+  for select using (is_approved_member());
+
+-- ─── Job Board ───
+
+create table if not exists job_posts (
+  id uuid primary key default gen_random_uuid(),
+  posted_by uuid not null references members(id) on delete cascade,
+  title text not null,
+  company text,
+  location text,
+  description text not null,
+  contact_email text not null,
+  status text not null default 'pending' check (status in ('pending','approved','rejected')),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists job_posts_status_idx on job_posts(status);
+
+alter table job_posts enable row level security;
+
+create policy "job: owner manage" on job_posts
+  for all using (auth.uid() = posted_by) with check (auth.uid() = posted_by);
+
+create policy "job: public read approved" on job_posts
+  for select using (status = 'approved');
+
+create policy "job: admin read all" on job_posts
+  for select using (is_admin());
+
+create policy "job: admin update all" on job_posts
+  for update using (is_admin());
+
+-- ─── Event RSVP ───
+-- event_slug is a stable hardcoded id per event in app/events/page.tsx —
+-- events themselves aren't database-backed yet, just RSVPs against them.
+
+create table if not exists event_rsvps (
+  id uuid primary key default gen_random_uuid(),
+  event_slug text not null,
+  member_id uuid not null references members(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (event_slug, member_id)
+);
+
+alter table event_rsvps enable row level security;
+
+create policy "rsvp: owner manage" on event_rsvps
+  for all using (auth.uid() = member_id) with check (auth.uid() = member_id);
+
+create policy "rsvp: approved members read all" on event_rsvps
+  for select using (is_approved_member());
+
 -- ─── First admin ───
 -- After you sign up through the site once, run this (with your own email)
 -- to make yourself the first admin. Every admin after that can be managed

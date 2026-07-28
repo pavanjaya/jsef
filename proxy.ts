@@ -38,8 +38,9 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAccountRoute = pathname.startsWith("/account");
   const isAdminRoute = pathname.startsWith("/admin");
+  const isBloodDonorsRoute = pathname.startsWith("/blood-donors");
 
-  if ((isAccountRoute || isAdminRoute) && !user) {
+  if ((isAccountRoute || isAdminRoute || isBloodDonorsRoute) && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
@@ -59,5 +60,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/admin/:path*"],
+  matcher: ["/account/:path*", "/admin/:path*", "/blood-donors/:path*"],
 };

@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
 import Reveal from "../components/Reveal";
+import EventRSVPButton from "../components/EventRSVPButton";
+import { createClient } from "../../lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Events — JSEC",
 };
 
+const SUPABASE_CONFIGURED = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
 const UPCOMING = [
-  { bg: "linear-gradient(140deg,#fff0e0,#ffd8b0)", emoji: "🏏", tag: "Sports", title: "Annual Cricket Tournament", meta: "Mar 15–17, 2026 · Sports Ground" },
-  { bg: "linear-gradient(140deg,#e8f0ff,#c8d8ff)", emoji: "💻", tag: "Education", title: "Digital Skills Workshop", meta: "Mar 22, 2026 · Community Hall" },
-  { bg: "linear-gradient(140deg,#f0ffe8,#c8f0b0)", emoji: "🎊", tag: "Cultural", title: "Cultural Festival Night", meta: "Apr 5, 2026 · Main Auditorium" },
+  { slug: "annual-cricket-tournament-2026", bg: "linear-gradient(140deg,#fff0e0,#ffd8b0)", emoji: "🏏", tag: "Sports", title: "Annual Cricket Tournament", meta: "Mar 15–17, 2026 · Sports Ground" },
+  { slug: "digital-skills-workshop-2026", bg: "linear-gradient(140deg,#e8f0ff,#c8d8ff)", emoji: "💻", tag: "Education", title: "Digital Skills Workshop", meta: "Mar 22, 2026 · Community Hall" },
+  { slug: "cultural-festival-night-2026", bg: "linear-gradient(140deg,#f0ffe8,#c8f0b0)", emoji: "🎊", tag: "Cultural", title: "Cultural Festival Night", meta: "Apr 5, 2026 · Main Auditorium" },
 ] as const;
 
 const PAST = [
@@ -19,7 +23,31 @@ const PAST = [
 
 const DELAYS = [0, 1, 2] as const;
 
-export default function EventsPage() {
+// Preview counts shown only while Supabase isn't configured.
+const PREVIEW_COUNTS: Record<string, number> = {
+  "annual-cricket-tournament-2026": 34,
+  "digital-skills-workshop-2026": 12,
+  "cultural-festival-night-2026": 21,
+};
+
+export default async function EventsPage() {
+  const counts: Record<string, number> = { ...PREVIEW_COUNTS };
+  const going: Record<string, boolean> = {};
+
+  if (SUPABASE_CONFIGURED) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { data: rsvps } = await supabase.from("event_rsvps").select("event_slug, member_id");
+    for (const slug of Object.keys(counts)) counts[slug] = 0;
+    for (const r of rsvps ?? []) {
+      counts[r.event_slug] = (counts[r.event_slug] ?? 0) + 1;
+      if (user && r.member_id === user.id) going[r.event_slug] = true;
+    }
+  }
+
   return (
     <div className="page">
       <div className="page-banner">
@@ -50,6 +78,12 @@ export default function EventsPage() {
                   <span className="evp-tag">{e.tag}</span>
                   <div className="evp-title">{e.title}</div>
                   <div className="evp-meta">{e.meta}</div>
+                  <EventRSVPButton
+                    slug={e.slug}
+                    initialCount={counts[e.slug] ?? 0}
+                    initialGoing={going[e.slug] ?? false}
+                    supabaseConfigured={SUPABASE_CONFIGURED}
+                  />
                 </div>
               </Reveal>
             ))}

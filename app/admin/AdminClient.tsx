@@ -2,6 +2,18 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { approveMember, rejectMember } from "./actions";
+import { approveJobPost, rejectJobPost } from "../jobs/actions";
+
+type JobPost = {
+  id: string;
+  title: string;
+  company: string | null;
+  location: string | null;
+  description: string;
+  contact_email: string;
+  status: string;
+  created_at: string;
+};
 
 type Member = {
   id: string;
@@ -43,9 +55,11 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export default function AdminClient({ members }: { members: Member[] }) {
+export default function AdminClient({ members, jobPosts }: { members: Member[]; jobPosts: JobPost[] }) {
+  const [tab, setTab] = useState<"applications" | "jobs">("applications");
   const [filter, setFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
+  const [selectedJob, setSelectedJob] = useState<JobPost | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -54,17 +68,33 @@ export default function AdminClient({ members }: { members: Member[] }) {
     [members, filter]
   );
 
+  const pendingJobs = jobPosts.filter((j) => j.status === "pending");
+
   const runAction = (action: (id: string) => Promise<{ error: string | null }>, id: string) => {
     setError(null);
     startTransition(async () => {
       const result = await action(id);
       if (result.error) setError(result.error);
-      else setSelected(null);
+      else {
+        setSelected(null);
+        setSelectedJob(null);
+      }
     });
   };
 
   return (
     <>
+      <div className="dir-filters" style={{ marginBottom: "2rem" }}>
+        <button className={`dir-filter-btn${tab === "applications" ? " active" : ""}`} onClick={() => setTab("applications")}>
+          Applications ({members.length})
+        </button>
+        <button className={`dir-filter-btn${tab === "jobs" ? " active" : ""}`} onClick={() => setTab("jobs")}>
+          Job Posts ({pendingJobs.length} pending)
+        </button>
+      </div>
+
+      {tab === "applications" && (
+        <>
       <div className="dir-filters" style={{ marginTop: 0 }}>
         {FILTERS.map((f) => (
           <button
@@ -191,6 +221,101 @@ export default function AdminClient({ members }: { members: Member[] }) {
             )}
           </div>
         </div>
+      )}
+        </>
+      )}
+
+      {tab === "jobs" && (
+        <>
+          <div style={{ display: "flex", flexDirection: "column", gap: ".8rem" }}>
+            {jobPosts.length === 0 && <p style={{ color: "var(--ink-3)", fontSize: 14 }}>No job posts yet.</p>}
+            {jobPosts.map((j) => (
+              <button
+                key={j.id}
+                onClick={() => setSelectedJob(j)}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "1rem",
+                  textAlign: "left",
+                  width: "100%",
+                  background: "var(--bg)",
+                  border: "1px solid var(--rule)",
+                  padding: "1rem 1.4rem",
+                  cursor: "pointer",
+                  font: "inherit",
+                  color: "inherit",
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>{j.title}</div>
+                  <div style={{ fontSize: 12.5, color: "var(--ink-3)" }}>
+                    {j.company || "Community listing"} · Posted {formatDate(j.created_at)}
+                  </div>
+                </div>
+                <span className={`status-badge ${STATUS_CLASS[j.status]}`}>{j.status}</span>
+              </button>
+            ))}
+          </div>
+
+          {selectedJob && (
+            <div
+              className="modal-overlay open"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setSelectedJob(null);
+              }}
+            >
+              <div className="modal-box">
+                <button type="button" className="modal-close" onClick={() => setSelectedJob(null)} aria-label="Close">
+                  &#x2715;
+                </button>
+
+                <h3 style={{ marginBottom: ".3rem", fontSize: 22 }}>{selectedJob.title}</h3>
+                <span className={`status-badge ${STATUS_CLASS[selectedJob.status]}`} style={{ marginBottom: "1.5rem", display: "inline-block" }}>
+                  {selectedJob.status}
+                </span>
+
+                <div className="fg-section-title" style={{ marginTop: 0 }}>Details</div>
+                <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>
+                  Company: {selectedJob.company || "—"}
+                  <br />
+                  Location: {selectedJob.location || "—"}
+                  <br />
+                  Contact: {selectedJob.contact_email}
+                </p>
+
+                <div className="fg-section-title">Description</div>
+                <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>{selectedJob.description}</p>
+
+                {error && <p style={{ fontSize: 13, color: "#B91C1C", margin: "1rem 0" }}>{error}</p>}
+
+                {selectedJob.status === "pending" && (
+                  <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
+                    <button
+                      type="button"
+                      className="btn btn-brand"
+                      disabled={pending}
+                      style={{ flex: 1, justifyContent: "center", opacity: pending ? 0.6 : 1 }}
+                      onClick={() => runAction(approveJobPost, selectedJob.id)}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      disabled={pending}
+                      style={{ flex: 1, justifyContent: "center", opacity: pending ? 0.6 : 1 }}
+                      onClick={() => runAction(rejectJobPost, selectedJob.id)}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );
