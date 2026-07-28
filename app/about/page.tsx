@@ -36,7 +36,7 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <section className="sec" style={{ background: "var(--surface)" }}>
+      <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
           <div className="about-grid">
             <Reveal className="about-img" from="left">

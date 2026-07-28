@@ -116,7 +116,7 @@ export default async function AdminPage() {
         </div>
       </div>
 
-      <section className="sec" style={{ background: "var(--surface)" }}>
+      <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
           <AdminClient members={members} />
         </div>

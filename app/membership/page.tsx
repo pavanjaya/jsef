@@ -116,7 +116,7 @@ export default function MembershipPage() {
         </div>
       </div>
 
-      <section className="sec" style={{ background: "var(--surface)", paddingTop: "5rem" }}>
+      <section className="sec" style={{ background: "var(--bg)", paddingTop: "5rem" }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow">
             Who Can Join
@@ -170,7 +170,7 @@ export default function MembershipPage() {
 
       <div className="rule-line"></div>
 
-      <section className="sec" style={{ background: "var(--surface)" }}>
+      <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow" style={{ textAlign: "center", display: "block" }}>
             Questions

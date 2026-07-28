@@ -34,7 +34,7 @@ export default function EventsPage() {
           </Reveal>
         </div>
       </div>
-      <section className="sec" style={{ background: "var(--surface)" }}>
+      <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow">
             Upcoming

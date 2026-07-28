@@ -72,7 +72,7 @@ export default async function AccountPage() {
         </div>
       </div>
 
-      <section className="sec" style={{ background: "var(--surface)" }}>
+      <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
           <div className="mem-form" style={{ margin: "0 auto" }}>
             <span className={`status-badge ${status.className}`}>{status.label}</span>

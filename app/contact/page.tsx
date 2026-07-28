@@ -48,7 +48,7 @@ export default function ContactPage() {
           </Reveal>
         </div>
       </div>
-      <section className="sec" style={{ background: "var(--surface)" }}>
+      <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
           <div className="cnt-layout">
             <div>

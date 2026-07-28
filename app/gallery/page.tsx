@@ -21,7 +21,7 @@ export default function GalleryPage() {
           </Reveal>
         </div>
       </div>
-      <section className="sec" style={{ background: "var(--surface)" }}>
+      <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
           <GalleryClient />
         </div>
