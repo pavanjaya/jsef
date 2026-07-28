@@ -73,7 +73,7 @@ nav.scrolled{background:var(--bg);backdrop-filter:none;border-color:var(--rule)}
   border-radius:9999px;padding:6px 14px 6px 12px;
 }
 .eyebrow-pill::before{content:'✦';font-size:9px}
-.h1{font-family:var(--f-display);font-size:clamp(40px,6vw,72px);font-weight:400;line-height:1.05;letter-spacing:-1px;text-transform:uppercase;color:var(--ink)}
+.h1{font-family:var(--f-display);font-size:clamp(30px,4.2vw,52px);font-weight:400;line-height:1.08;letter-spacing:-.5px;text-transform:uppercase;color:var(--ink)}
 .h1 em{font-style:italic;font-weight:400}
 .h2{font-family:var(--f-display);font-size:clamp(30px,3.6vw,48px);font-weight:400;line-height:1.15;letter-spacing:-.4px;color:var(--ink)}
 .h2 em{font-style:italic;font-weight:400;color:var(--ink)}
