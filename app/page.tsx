@@ -160,12 +160,14 @@ export default function HomePage() {
           </Reveal>
         </div>
         <div className="moments-strip">
-          {MOMENTS.map((m) => (
-            <div className="moments-card" style={{ backgroundImage: `url('${m.img}')` }} key={m.img}>
-              <div className="moments-card-overlay"></div>
-              <span className="moments-badge">{m.label}</span>
-            </div>
-          ))}
+          <div className="moments-track">
+            {[...MOMENTS, ...MOMENTS].map((m, i) => (
+              <div className="moments-card" style={{ backgroundImage: `url('${m.img}')` }} key={`${m.img}-${i}`}>
+                <div className="moments-card-overlay"></div>
+                <span className="moments-badge">{m.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
