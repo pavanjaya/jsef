@@ -635,7 +635,7 @@ p,blockquote,
 .cnt-val a:hover{color:var(--brand)}
 
 /* ─── FOOTER ─── */
-footer{background:var(--warm);padding:5.5rem 0 2.5rem;border-top:1px solid var(--rule)}
+footer{background:var(--bg);padding:5.5rem 0 2.5rem;border-top:1px solid var(--rule)}
 .foot-wrap{padding:0 3rem}
 .foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;margin-bottom:4.5rem}
 .foot-brand-desc{font-size:13.5px;color:var(--ink-2);line-height:1.85;margin-top:1.2rem;max-width:280px}
