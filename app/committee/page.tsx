@@ -155,7 +155,7 @@ function MemberCard({ m, delay }: { m: Member; delay?: (typeof DELAYS)[number] }
 export default function CommitteePage() {
   return (
     <div className="page">
-      <div className="page-banner" style={{ background: "var(--bg)", borderBottom: "1px solid var(--rule)" }}>
+      <div className="page-banner" style={{ background: "var(--bg)" }}>
         <div className="wrap">
           <Reveal as="span" className="eyebrow">
             Governing Body
