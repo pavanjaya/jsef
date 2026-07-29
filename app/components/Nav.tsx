@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "../../lib/supabase/client";
 import LoginModal from "./LoginModal";
 
@@ -14,7 +14,13 @@ const LINKS = [
   { href: "/gallery", label: "Gallery" },
   { href: "/magazine", label: "Magazine" },
   { href: "/membership", label: "Membership" },
-  { href: "/directory", label: "Directory" },
+];
+
+const COMMUNITY_LINKS = [
+  { href: "/directory", label: "Business Directory" },
+  { href: "/blood-donors", label: "Blood Donors" },
+  { href: "/jobs", label: "Job Board" },
+  { href: "/scholarships", label: "Scholarships" },
 ];
 
 export default function Nav() {
@@ -24,11 +30,32 @@ export default function Nav() {
   const [lastPathname, setLastPathname] = useState(pathname);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [communityOpen, setCommunityOpen] = useState(false);
+  const communityRef = useRef<HTMLLIElement>(null);
+  const communityActive = COMMUNITY_LINKS.some((l) => l.href === pathname);
 
   if (pathname !== lastPathname) {
     setLastPathname(pathname);
     setMobOpen(false);
   }
+
+  useEffect(() => {
+    if (!communityOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (communityRef.current && !communityRef.current.contains(e.target as Node)) {
+        setCommunityOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCommunityOpen(false);
+    };
+    document.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [communityOpen]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -66,6 +93,26 @@ export default function Nav() {
               </Link>
             </li>
           ))}
+          <li className="nav-dropdown" ref={communityRef}>
+            <button
+              type="button"
+              className={`nav-dropdown-trigger${communityActive ? " active" : ""}`}
+              onClick={() => setCommunityOpen((v) => !v)}
+              aria-expanded={communityOpen}
+            >
+              Community
+              <svg className="nav-dropdown-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            <div className={`nav-dropdown-menu${communityOpen ? " open" : ""}`}>
+              {COMMUNITY_LINKS.map((l) => (
+                <Link key={l.href} href={l.href} className={pathname === l.href ? "active" : ""} onClick={() => setCommunityOpen(false)}>
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          </li>
           {!isLoggedIn && (
             <li>
               <a
@@ -103,6 +150,11 @@ export default function Nav() {
       </nav>
       <div className={`mob-menu${mobOpen ? " open" : ""}`}>
         {LINKS.map((l) => (
+          <Link key={l.href} href={l.href} onClick={() => setMobOpen(false)}>
+            {l.label}
+          </Link>
+        ))}
+        {COMMUNITY_LINKS.map((l) => (
           <Link key={l.href} href={l.href} onClick={() => setMobOpen(false)}>
             {l.label}
           </Link>
