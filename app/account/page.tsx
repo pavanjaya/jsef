@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
 import { signOut } from "./actions";
 import { upsertDonorProfile, removeDonorProfile } from "../blood-donors/actions";
+import { setDirectoryVisible } from "../members/actions";
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const;
 
@@ -41,6 +42,7 @@ export default async function AccountPage() {
   let email = "you@example.com";
   let member: { full_name: string; status: string; member_id: string | null } = PREVIEW_MEMBER;
   let donorProfile: { blood_group: string; city: string; available: boolean } | null = null;
+  let directoryVisible = true;
 
   if (SUPABASE_CONFIGURED) {
     const supabase = await createClient();
@@ -53,6 +55,7 @@ export default async function AccountPage() {
 
     const { data } = await supabase.from("members").select("*").eq("id", user.id).single();
     member = data ?? { full_name: "", status: "pending", member_id: null };
+    directoryVisible = data?.directory_visible ?? true;
 
     const { data: donor } = await supabase
       .from("blood_donors")
@@ -172,6 +175,32 @@ export default async function AccountPage() {
                     </button>
                   )}
                 </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {SUPABASE_CONFIGURED && member.status === "approved" && (
+        <section className="sec" style={{ background: "var(--bg)" }}>
+          <div className="wrap">
+            <div className="mem-form" style={{ margin: "0 auto" }}>
+              <h3 style={{ marginBottom: ".4rem", fontSize: 18 }}>Members Directory</h3>
+              <p style={{ fontSize: 13, color: "var(--ink-3)", marginBottom: "1.5rem" }}>
+                You&apos;re listed on the{" "}
+                <a href="/members" style={{ color: "var(--brand)" }}>
+                  Members
+                </a>{" "}
+                page by default — only your name, city, and gotra are shown to fellow logged-in members.
+              </p>
+              <form action={setDirectoryVisible}>
+                <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: 13.5, color: "var(--ink-2)", marginBottom: "1.5rem" }}>
+                  <input type="checkbox" name="directory_visible" defaultChecked={directoryVisible} />
+                  Show me in the Members Directory
+                </label>
+                <button type="submit" className="btn btn-ghost" style={{ width: "100%", justifyContent: "center" }}>
+                  Save Preference
+                </button>
               </form>
             </div>
           </div>

@@ -228,6 +228,219 @@ create policy "rsvp: owner manage" on event_rsvps
 create policy "rsvp: approved members read all" on event_rsvps
   for select using (is_approved_member());
 
+-- ═══════════════════════════════════════════════════════════════════
+-- Phase 3: Members List + Matrimony
+-- ═══════════════════════════════════════════════════════════════════
+
+-- ─── Members List ───
+
+alter table members add column if not exists directory_visible boolean not null default true;
+
+-- Exposes only non-sensitive columns — never phone/email/aadhaar/address,
+-- since RLS is row-level, not column-level, and a direct "select" policy
+-- would let any approved member query those columns straight from the
+-- client regardless of what the UI shows.
+create or replace function list_directory_members()
+returns table (member_id text, full_name text, city text, gotra text)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select m.member_id, m.full_name, m.city, m.gotra
+  from members m
+  where m.status = 'approved' and m.directory_visible = true
+  order by m.full_name;
+$$;
+
+revoke all on function list_directory_members() from public;
+grant execute on function list_directory_members() to authenticated;
+
+-- ─── Matrimony ───
+
+create table if not exists matrimony_profiles (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid not null unique references members(id) on delete cascade,
+  photo_path text,
+  age int,
+  height text,
+  education text,
+  profession text,
+  gotra text,
+  city text,
+  about text,
+  status text not null default 'draft' check (status in ('draft','pending','approved')),
+  created_at timestamptz not null default now()
+);
+
+alter table matrimony_profiles enable row level security;
+
+create policy "matrimony profile: owner manage" on matrimony_profiles
+  for all using (auth.uid() = member_id) with check (auth.uid() = member_id);
+
+create policy "matrimony profile: admin read all" on matrimony_profiles
+  for select using (is_admin());
+
+create policy "matrimony profile: admin update all" on matrimony_profiles
+  for update using (is_admin());
+
+-- Browsable listing never returns member_id, so the client can't join a
+-- profile back to a real identity — only the accept-request flow does that,
+-- server-side, via the protected /api/matrimony/contact route.
+create or replace function browse_matrimony_profiles()
+returns table (
+  id uuid, age int, height text, education text, profession text,
+  gotra text, city text, about text, photo_path text
+)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select p.id, p.age, p.height, p.education, p.profession, p.gotra, p.city, p.about, p.photo_path
+  from matrimony_profiles p
+  where p.status = 'approved'
+  order by p.created_at desc;
+$$;
+
+revoke all on function browse_matrimony_profiles() from public;
+grant execute on function browse_matrimony_profiles() to authenticated;
+
+create table if not exists matrimony_requests (
+  id uuid primary key default gen_random_uuid(),
+  from_member_id uuid not null references members(id) on delete cascade,
+  to_profile_id uuid not null references matrimony_profiles(id) on delete cascade,
+  status text not null default 'pending' check (status in ('pending','accepted','declined')),
+  created_at timestamptz not null default now(),
+  unique (from_member_id, to_profile_id)
+);
+
+alter table matrimony_requests enable row level security;
+
+create policy "matrimony request: sender insert" on matrimony_requests
+  for insert with check (auth.uid() = from_member_id);
+
+create policy "matrimony request: sender or profile owner read" on matrimony_requests
+  for select using (
+    auth.uid() = from_member_id
+    or exists (
+      select 1 from matrimony_profiles p
+      where p.id = to_profile_id and p.member_id = auth.uid()
+    )
+  );
+
+create policy "matrimony request: profile owner respond" on matrimony_requests
+  for update using (
+    exists (
+      select 1 from matrimony_profiles p
+      where p.id = to_profile_id and p.member_id = auth.uid()
+    )
+  );
+
+-- Lets a profile owner see the (still-anonymized) profile of whoever sent
+-- them a request, so they have something to decide Accept/Decline on. Only
+-- callable for requests actually targeting the caller's own profile.
+create or replace function get_requester_profile(p_request_id uuid)
+returns table (
+  age int, height text, education text, profession text,
+  gotra text, city text, about text, photo_path text
+)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select mp.age, mp.height, mp.education, mp.profession, mp.gotra, mp.city, mp.about, mp.photo_path
+  from matrimony_requests r
+  join matrimony_profiles mp on mp.member_id = r.from_member_id
+  join matrimony_profiles owned on owned.id = r.to_profile_id
+  where r.id = p_request_id and owned.member_id = auth.uid();
+$$;
+
+revoke all on function get_requester_profile(uuid) from public;
+grant execute on function get_requester_profile(uuid) to authenticated;
+
+-- Reveals real contact details for an accepted request, to either party of
+-- that request. Neither `members` nor `matrimony_profiles` grants a direct
+-- cross-member select policy (see the privacy note above), so this security
+-- definer function is the *only* path that can join a request back to real
+-- names/phone/email — and only after checking status='accepted' and that the
+-- caller is actually a party to the request.
+create or replace function get_matrimony_contact(p_request_id uuid)
+returns table (full_name text, phone text, email text)
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare
+  v_from_member uuid;
+  v_to_owner uuid;
+  v_status text;
+  v_other uuid;
+begin
+  select r.from_member_id, r.status, p.member_id
+    into v_from_member, v_status, v_to_owner
+  from matrimony_requests r
+  join matrimony_profiles p on p.id = r.to_profile_id
+  where r.id = p_request_id;
+
+  if v_status is distinct from 'accepted' then
+    return;
+  end if;
+
+  if auth.uid() = v_from_member then
+    v_other := v_to_owner;
+  elsif auth.uid() = v_to_owner then
+    v_other := v_from_member;
+  else
+    return;
+  end if;
+
+  return query select m.full_name, m.phone, m.email from members m where m.id = v_other;
+end;
+$$;
+
+revoke all on function get_matrimony_contact(uuid) from public;
+grant execute on function get_matrimony_contact(uuid) to authenticated;
+
+-- ─── Storage: private bucket for matrimony photos ───
+
+insert into storage.buckets (id, name, public)
+values ('matrimony-photos', 'matrimony-photos', false)
+on conflict (id) do nothing;
+
+create policy "matrimony photos: owner insert"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'matrimony-photos'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create policy "matrimony photos: owner read"
+  on storage.objects for select
+  using (
+    bucket_id = 'matrimony-photos'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create policy "matrimony photos: admin read all"
+  on storage.objects for select
+  using (
+    bucket_id = 'matrimony-photos'
+    and is_admin()
+  );
+
+create policy "matrimony photos: approved profile read"
+  on storage.objects for select
+  using (
+    bucket_id = 'matrimony-photos'
+    and exists (
+      select 1 from matrimony_profiles p
+      where p.photo_path = storage.objects.name and p.status = 'approved'
+    )
+  );
+
 -- ─── First admin ───
 -- After you sign up through the site once, run this (with your own email)
 -- to make yourself the first admin. Every admin after that can be managed

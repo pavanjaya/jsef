@@ -18,8 +18,10 @@ const LINKS = [
 
 const COMMUNITY_LINKS = [
   { href: "/directory", label: "Business Directory" },
+  { href: "/members", label: "Members" },
   { href: "/blood-donors", label: "Blood Donors" },
   { href: "/jobs", label: "Job Board" },
+  { href: "/matrimony", label: "Matrimony" },
   { href: "/scholarships", label: "Scholarships" },
 ];
 

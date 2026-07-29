@@ -102,9 +102,59 @@ const PREVIEW_JOB_POSTS = [
   },
 ];
 
+type MatrimonyProfile = {
+  id: string;
+  photo_url: string | null;
+  age: number | null;
+  height: string | null;
+  education: string | null;
+  profession: string | null;
+  gotra: string | null;
+  city: string | null;
+  about: string | null;
+  status: string;
+  created_at: string;
+  applicant_name: string | null;
+  applicant_phone: string | null;
+};
+
+const PREVIEW_MATRIMONY_PROFILES: MatrimonyProfile[] = [
+  {
+    id: "preview-mp-1",
+    photo_url: null,
+    age: 27,
+    height: "5' 6\"",
+    education: "B.Tech",
+    profession: "Software Engineer",
+    gotra: "Kashyap",
+    city: "Nashik",
+    about: "Enjoys cricket and community volunteering.",
+    status: "pending",
+    created_at: "2026-07-24T10:00:00Z",
+    applicant_name: "Sample Applicant",
+    applicant_phone: "+91 90000 00001",
+  },
+  {
+    id: "preview-mp-2",
+    photo_url: null,
+    age: 29,
+    height: "5' 4\"",
+    education: "MBA",
+    profession: "Marketing Manager",
+    gotra: "—",
+    city: "Pune",
+    about: "Loves travel and classical music.",
+    status: "approved",
+    created_at: "2026-07-12T10:00:00Z",
+    applicant_name: "Sample Applicant Two",
+    applicant_phone: "+91 90000 00002",
+  },
+];
+
 export default async function AdminPage() {
   let members = PREVIEW_MEMBERS;
   let jobPosts = PREVIEW_JOB_POSTS;
+  let matrimonyProfiles: MatrimonyProfile[] = PREVIEW_MATRIMONY_PROFILES;
 
   if (SUPABASE_CONFIGURED) {
     const supabase = await createClient();
@@ -122,6 +172,36 @@ export default async function AdminPage() {
 
     const { data: jobs } = await supabase.from("job_posts").select("*").order("created_at", { ascending: false });
     jobPosts = jobs ?? [];
+
+    const { data: profiles } = await supabase
+      .from("matrimony_profiles")
+      .select("*, members(full_name, phone)")
+      .order("created_at", { ascending: false });
+
+    matrimonyProfiles = await Promise.all(
+      (profiles ?? []).map(async (p) => {
+        let photo_url: string | null = null;
+        if (p.photo_path) {
+          const { data: signed } = await supabase.storage.from("matrimony-photos").createSignedUrl(p.photo_path, 300);
+          photo_url = signed?.signedUrl ?? null;
+        }
+        return {
+          id: p.id,
+          photo_url,
+          age: p.age,
+          height: p.height,
+          education: p.education,
+          profession: p.profession,
+          gotra: p.gotra,
+          city: p.city,
+          about: p.about,
+          status: p.status,
+          created_at: p.created_at,
+          applicant_name: p.members?.full_name ?? null,
+          applicant_phone: p.members?.phone ?? null,
+        };
+      })
+    );
   }
 
   return (
@@ -145,7 +225,7 @@ export default async function AdminPage() {
 
       <section className="sec" style={{ background: "var(--bg)" }}>
         <div className="wrap">
-          <AdminClient members={members} jobPosts={jobPosts} />
+          <AdminClient members={members} jobPosts={jobPosts} matrimonyProfiles={matrimonyProfiles} />
         </div>
       </section>
     </div>

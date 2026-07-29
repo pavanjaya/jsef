@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { approveMember, rejectMember } from "./actions";
 import { approveJobPost, rejectJobPost } from "../jobs/actions";
+import { approveMatrimonyProfile, rejectMatrimonyProfile } from "../matrimony/actions";
 
 type JobPost = {
   id: string;
@@ -13,6 +14,22 @@ type JobPost = {
   contact_email: string;
   status: string;
   created_at: string;
+};
+
+type MatrimonyProfile = {
+  id: string;
+  photo_url: string | null;
+  age: number | null;
+  height: string | null;
+  education: string | null;
+  profession: string | null;
+  gotra: string | null;
+  city: string | null;
+  about: string | null;
+  status: string;
+  created_at: string;
+  applicant_name: string | null;
+  applicant_phone: string | null;
 };
 
 type Member = {
@@ -46,6 +63,7 @@ const FILTERS = [
 ] as const;
 
 const STATUS_CLASS: Record<string, string> = {
+  draft: "status-pending",
   pending: "status-pending",
   approved: "status-approved",
   rejected: "status-rejected",
@@ -55,11 +73,20 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export default function AdminClient({ members, jobPosts }: { members: Member[]; jobPosts: JobPost[] }) {
-  const [tab, setTab] = useState<"applications" | "jobs">("applications");
+export default function AdminClient({
+  members,
+  jobPosts,
+  matrimonyProfiles,
+}: {
+  members: Member[];
+  jobPosts: JobPost[];
+  matrimonyProfiles: MatrimonyProfile[];
+}) {
+  const [tab, setTab] = useState<"applications" | "jobs" | "matrimony">("applications");
   const [filter, setFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Member | null>(null);
   const [selectedJob, setSelectedJob] = useState<JobPost | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<MatrimonyProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -69,6 +96,7 @@ export default function AdminClient({ members, jobPosts }: { members: Member[]; 
   );
 
   const pendingJobs = jobPosts.filter((j) => j.status === "pending");
+  const pendingProfiles = matrimonyProfiles.filter((p) => p.status === "pending");
 
   const runAction = (action: (id: string) => Promise<{ error: string | null }>, id: string) => {
     setError(null);
@@ -78,6 +106,7 @@ export default function AdminClient({ members, jobPosts }: { members: Member[]; 
       else {
         setSelected(null);
         setSelectedJob(null);
+        setSelectedProfile(null);
       }
     });
   };
@@ -90,6 +119,9 @@ export default function AdminClient({ members, jobPosts }: { members: Member[]; 
         </button>
         <button className={`dir-filter-btn${tab === "jobs" ? " active" : ""}`} onClick={() => setTab("jobs")}>
           Job Posts ({pendingJobs.length} pending)
+        </button>
+        <button className={`dir-filter-btn${tab === "matrimony" ? " active" : ""}`} onClick={() => setTab("matrimony")}>
+          Matrimony Profiles ({pendingProfiles.length} pending)
         </button>
       </div>
 
@@ -307,6 +339,117 @@ export default function AdminClient({ members, jobPosts }: { members: Member[]; 
                       disabled={pending}
                       style={{ flex: 1, justifyContent: "center", opacity: pending ? 0.6 : 1 }}
                       onClick={() => runAction(rejectJobPost, selectedJob.id)}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {tab === "matrimony" && (
+        <>
+          <div style={{ display: "flex", flexDirection: "column", gap: ".8rem" }}>
+            {matrimonyProfiles.length === 0 && <p style={{ color: "var(--ink-3)", fontSize: 14 }}>No matrimony profiles yet.</p>}
+            {matrimonyProfiles.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setSelectedProfile(p)}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "1rem",
+                  textAlign: "left",
+                  width: "100%",
+                  background: "var(--bg)",
+                  border: "1px solid var(--rule)",
+                  padding: "1rem 1.4rem",
+                  cursor: "pointer",
+                  font: "inherit",
+                  color: "inherit",
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>{p.applicant_name || "Unknown applicant"}</div>
+                  <div style={{ fontSize: 12.5, color: "var(--ink-3)" }}>
+                    {[p.age ? `${p.age} yrs` : null, p.city].filter(Boolean).join(" · ") || "—"} · Updated {formatDate(p.created_at)}
+                  </div>
+                </div>
+                <span className={`status-badge ${STATUS_CLASS[p.status]}`}>{p.status}</span>
+              </button>
+            ))}
+          </div>
+
+          {selectedProfile && (
+            <div
+              className="modal-overlay open"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setSelectedProfile(null);
+              }}
+            >
+              <div className="modal-box">
+                <button type="button" className="modal-close" onClick={() => setSelectedProfile(null)} aria-label="Close">
+                  &#x2715;
+                </button>
+
+                <h3 style={{ marginBottom: ".3rem", fontSize: 22 }}>{selectedProfile.applicant_name || "Unknown applicant"}</h3>
+                <span className={`status-badge ${STATUS_CLASS[selectedProfile.status]}`} style={{ marginBottom: "1.5rem", display: "inline-block" }}>
+                  {selectedProfile.status}
+                </span>
+
+                {selectedProfile.photo_url && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={selectedProfile.photo_url}
+                    alt=""
+                    style={{ width: 96, height: 96, objectFit: "cover", marginBottom: "1rem" }}
+                  />
+                )}
+
+                <div className="fg-section-title" style={{ marginTop: 0 }}>Profile</div>
+                <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>
+                  Age: {selectedProfile.age ?? "—"}
+                  <br />
+                  Height: {selectedProfile.height || "—"}
+                  <br />
+                  Education: {selectedProfile.education || "—"}
+                  <br />
+                  Profession: {selectedProfile.profession || "—"}
+                  <br />
+                  Gotra: {selectedProfile.gotra || "—"}
+                  <br />
+                  City: {selectedProfile.city || "—"}
+                </p>
+
+                <div className="fg-section-title">About</div>
+                <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>{selectedProfile.about || "—"}</p>
+
+                <div className="fg-section-title">Contact (admin only)</div>
+                <p style={{ fontSize: 13.5, color: "var(--ink-2)", lineHeight: 1.9 }}>{selectedProfile.applicant_phone || "—"}</p>
+
+                {error && <p style={{ fontSize: 13, color: "#B91C1C", margin: "1rem 0" }}>{error}</p>}
+
+                {selectedProfile.status === "pending" && (
+                  <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
+                    <button
+                      type="button"
+                      className="btn btn-brand"
+                      disabled={pending}
+                      style={{ flex: 1, justifyContent: "center", opacity: pending ? 0.6 : 1 }}
+                      onClick={() => runAction(approveMatrimonyProfile, selectedProfile.id)}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      disabled={pending}
+                      style={{ flex: 1, justifyContent: "center", opacity: pending ? 0.6 : 1 }}
+                      onClick={() => runAction(rejectMatrimonyProfile, selectedProfile.id)}
                     >
                       Reject
                     </button>
