@@ -5,8 +5,8 @@
   --ink:#1A1108;--ink-rgb:26,17,8;--ink-2:#6B6258;--ink-3:#9C9186;
   --rule:#DED5C2;--bg:#FFFEFA;--surface:#fff;--warm:#ECE0C6;
   --brand-tint:#F5E9C8;
-  --f:var(--font-label),Oswald,system-ui,sans-serif;
-  --f-serif:var(--font-body),Inter,system-ui,sans-serif;
+  --f:'General Sans',system-ui,sans-serif;
+  --f-serif:'General Sans',system-ui,sans-serif;
   --f-display:var(--font-display),Impact,sans-serif;
   --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
   --ease-in-out:cubic-bezier(0.76,0,0.24,1);

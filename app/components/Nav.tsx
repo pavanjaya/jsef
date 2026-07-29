@@ -13,7 +13,6 @@ const LINKS = [
   { href: "/events", label: "Events" },
   { href: "/gallery", label: "Gallery" },
   { href: "/magazine", label: "Magazine" },
-  { href: "/membership", label: "Membership" },
 ];
 
 const COMMUNITY_LINKS = [
